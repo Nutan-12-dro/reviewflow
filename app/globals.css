@@ -1,0 +1,28 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  background: #07090f;
+  color: #e8eaf2;
+  font-family: 'Geist', 'Segoe UI', system-ui, sans-serif;
+}
+
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 4px; }
+
+a { color: inherit; }
+
+input, select, textarea, button {
+  font-family: inherit;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: rgba(79,124,255,0.5) !important;
+  box-shadow: 0 0 0 3px rgba(79,124,255,0.12) !important;
+}
+
+/* Sidebar link hover */
+nav a:hover {
+  background: rgba(255,255,255,0.04) !important;
+  color: #e8eaf2 !important;
+}
