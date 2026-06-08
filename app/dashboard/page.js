@@ -1,17 +1,26 @@
 "use client";
 import { useState } from "react";
-// Import your auth or navigation hooks if needed, e.g.:
-// import { useApp } from "../layout"; 
+import { createClient } from "../lib/supabase"; // <-- THIS IS THE NEW GUY!
 
 export default function LoginPage() {
+  const supabase = createClient();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [activeTab, setActiveTab] = useState("signin"); // signin or signup
+  const [activeTab, setActiveTab] = useState("signin");
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Your authentication logic here
-    console.log("Submitting:", { email, password, activeTab });
+    
+    if (activeTab === "signup") {
+      const { data, error } = await supabase.auth.signUp({ email, password });
+      if (error) alert(error.message);
+      else alert("Success! Account created.");
+    } else {
+      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) alert(error.message);
+      else window.location.href = "/dashboard";
+    }
   };
 
   return (
@@ -32,7 +41,7 @@ export default function LoginPage() {
           width: 40,
           height: 40,
           borderRadius: 10,
-          background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+          background: "linear-gradient(135deg, #14e00d 0%, #28df10 100%)",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
