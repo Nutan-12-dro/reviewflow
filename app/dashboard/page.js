@@ -1,246 +1,42 @@
 "use client";
-import { useState } from "react";
-import { createClient } from "../lib/supabase"; // <-- THIS IS THE NEW GUY!
+import { useApp } from "../layout";
 
-export default function LoginPage() {
-  const supabase = createClient();
+export default function DashboardPage() {
+  const { user, campaigns } = useApp();
+  const isAdmin = user?.role === "admin" || user?.role === "manager";
+  const visibleCampaigns = isAdmin ? campaigns : campaigns.filter(c => c.reviewer === user?.name);
+  const active = visibleCampaigns.filter(c => c.status === "active");
+  const completed = visibleCampaigns.filter(c => c.status === "completed");
+  const urgent = active.filter(c => c.priority === "urgent" || c.priority === "high");
 
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [activeTab, setActiveTab] = useState("signin");
+  const stats = [
+    { label: "Active Campaigns",    value: active.length,    icon: "◉", color: "#22c00d", bg: "rgba(16,185,129,0.1)"  },
+    { label: "Completed",           value: completed.length, icon: "✓", color: "#22c00d", bg: "rgba(16,185,129,0.1)"  },
+    { label: "Urgent / High",       value: urgent.length,    icon: "↑", color: "#f5260b", bg: "rgba(245,158,11,0.1)"  },
+    { label: "Total Campaigns",     value: visibleCampaigns.length, icon: "▦", color: "#e5e7eb", bg: "rgba(255,255,255,0.05)"  },
+  ];
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    
-    if (activeTab === "signup") {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) alert(error.message);
-      else alert("Success! Account created.");
-    } else {
-      const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-      if (error) alert(error.message);
-      else window.location.href = "/dashboard";
-    }
-  };
+  const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      backgroundColor: "#000000",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
-      fontFamily: "system-ui, sans-serif",
-      color: "#ffffff",
-      padding: 20
-    }}>
-      {/* Brand Header */}
-      <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40 }}>
-        <div style={{
-          width: 40,
-          height: 40,
-          borderRadius: 10,
-          background: "linear-gradient(135deg, #14e00d 0%, #28df10 100%)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontWeight: "bold",
-          fontSize: 20,
-          color: "#000000"
-        }}>
-          ⚡
+    <div style={{ padding: 32, backgroundColor: "#000000", minHeight: "100vh", color: "#ffffff" }}>
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase", color: "#a3a3a3", marginBottom: 6 }}>
+          {isAdmin ? "Manager Overview" : "Reviewer Dashboard"}
         </div>
-        <div>
-          <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: -0.5 }}>Campaign ReviewFlow</div>
-          <div style={{ fontSize: 11, color: "#a3a3a3", marginTop: 1 }}>Review Management Platform</div>
-        </div>
+        <h1 style={{ fontSize: 26, fontWeight: 700, margin: 0, letterSpacing: -0.5, color: "#ffffff" }}>
+          Good to see you, {user?.name?.split(" ")[0] || "Nutan"} 👋
+        </h1>
       </div>
 
-      {/* Auth Card Box */}
-      <div style={{
-        width: "100%",
-        maxWidth: 420,
-        background: "#0a0a0a",
-        border: "1px solid rgba(255,255,255,0.08)",
-        borderRadius: 16,
-        padding: "32px 28px",
-        boxShadow: "0 20px 40px rgba(0,0,0,0.4)"
-      }}>
-        
-        {/* Top Segmented Tabs (Sign In / Create Account) */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          background: "rgba(255,255,255,0.03)",
-          padding: 4,
-          borderRadius: 10,
-          marginBottom: 32,
-          border: "1px solid rgba(255,255,255,0.04)"
-        }}>
-          <button 
-            onClick={() => setActiveTab("signin")}
-            style={{
-              padding: "8px 0",
-              background: activeTab === "signin" ? "#0ee219" : "transparent",
-              color: activeTab === "signin" ? "#000000" : "#a3a3a3",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 0.2s"
-            }}
-          >
-            Sign In
-          </button>
-          <button 
-            onClick={() => setActiveTab("signup")}
-            style={{
-              padding: "8px 0",
-              background: activeTab === "signup" ? "#0ee219" : "transparent",
-              color: activeTab === "signup" ? "#000000" : "#a3a3a3",
-              border: "none",
-              borderRadius: 8,
-              fontSize: 13,
-              fontWeight: 600,
-              cursor: "pointer",
-              transition: "all 0.2s"
-            }}
-          >
-            Create Account
-          </button>
-        </div>
-
-        {/* Titles */}
-        <h2 style={{ fontSize: 24, fontWeight: 700, margin: "0 0 6px 0", letterSpacing: -0.5 }}>
-          {activeTab === "signin" ? "Welcome back" : "Get started"}
-        </h2>
-        <p style={{ fontSize: 13, color: "#a3a3a3", margin: "0 0 28px 0" }}>
-          {activeTab === "signin" ? "Sign in to your dashboard" : "Create your reviewer or admin profile"}
-        </p>
-
-        {/* Input Form */}
-        <form onSubmit={handleSubmit}>
-          {/* Email Field */}
-          <div style={{ marginBottom: 20 }}>
-            <label style={{ 
-              display: "block", 
-              fontSize: 11, 
-              fontWeight: 700, 
-              color: "#e5e7eb", 
-              textTransform: "uppercase", 
-              letterSpacing: 1,
-              marginBottom: 8
-            }}>
-              Email Address
-            </label>
-            <input 
-              type="email" 
-              placeholder="you@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              style={{
-                width: "100%",
-                boxSizing: "border-box",
-                background: "#000000",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: 10,
-                padding: "12px 16px",
-                color: "#ffffff",
-                fontSize: 14,
-                outline: "none",
-                transition: "border-color 0.2s"
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#10b981"}
-              onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.12)"}
-              required
-            />
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 36 }}>
+        {stats.map((s, i) => (
+          <div key={i} style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 14, padding: "20px 22px" }}>
+            <div style={{ width: 38, height: 38, borderRadius: 10, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17, color: s.color, marginBottom: 14 }}>{s.icon}</div>
+            <div style={{ fontSize: 30, fontWeight: 700, letterSpacing: -1, color: s.color }}>{s.value}</div>
+            <div style={{ fontSize: 12, color: "#a3a3a3", marginTop: 4, fontWeight: 500 }}>{s.label}</div>
           </div>
-
-          {/* Password Field */}
-          <div style={{ marginBottom: 28 }}>
-            <label style={{ 
-              display: "block", 
-              fontSize: 11, 
-              fontWeight: 700, 
-              color: "#e5e7eb", 
-              textTransform: "uppercase", 
-              letterSpacing: 1,
-              marginBottom: 8
-            }}>
-              Password
-            </label>
-            <input 
-              type="password" 
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              style={{
-                width: "100%",
-                boxSizing: "border-box",
-                background: "#000000",
-                border: "1px solid rgba(255,255,255,0.12)",
-                borderRadius: 10,
-                padding: "12px 16px",
-                color: "#ffffff",
-                fontSize: 14,
-                outline: "none",
-                transition: "border-color 0.2s"
-              }}
-              onFocus={(e) => e.target.style.borderColor = "#0ee219"}
-              onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.12)"}
-              required
-            />
-          </div>
-
-          {/* Action Button */}
-          <button 
-            type="submit"
-            style={{
-              width: "100%",
-              background: "#0ee219",
-              color: "#000000",
-              border: "none",
-              borderRadius: 10,
-              padding: "14px 0",
-              fontSize: 14,
-              fontWeight: 700,
-              cursor: "pointer",
-              transition: "opacity 0.2s"
-            }}
-            onMouseOver={(e) => e.target.style.opacity = "0.9"}
-            onMouseOut={(e) => e.target.style.opacity = "1"}
-          >
-            {activeTab === "signin" ? "Sign In →" : "Register Account →"}
-          </button>
-        </form>
-
-        {/* Dynamic Footer Switcher Link */}
-        <div style={{ textAlign: "center", marginTop: 24, fontSize: 12, color: "#a3a3a3" }}>
-          {activeTab === "signin" ? (
-            <>
-              No account yet?{" "}
-              <span 
-                onClick={() => setActiveTab("signup")}
-                style={{ color: "#0ee219", cursor: "pointer", fontWeight: 500 }}
-              >
-                Create one →
-              </span>
-            </>
-          ) : (
-            <>
-              Already have an account?{" "}
-              <span 
-                onClick={() => setActiveTab("signin")}
-                style={{ color: "#0ee219", cursor: "pointer", fontWeight: 500 }}
-              >
-                Sign in instead ←
-              </span>
-            </>
-          )}
-        </div>
-
+        ))}
       </div>
     </div>
   );
