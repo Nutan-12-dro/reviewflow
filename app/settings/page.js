@@ -14,7 +14,7 @@ export default function SettingsPage() {
   };
 
   const Toggle = ({ on, onToggle }) => (
-    <div onClick={onToggle} style={{ width: 40, height: 22, borderRadius: 20, background: on ? "#4f7cff" : "#141820", border: `1px solid ${on ? "#4f7cff" : "rgba(255,255,255,0.08)"}`, position: "relative", cursor: "pointer", transition: "all 0.2s", flexShrink: 0 }}>
+    <div onClick={onToggle} style={{ width: 40, height: 22, borderRadius: 20, background: on ? "#22c00d" : "#141820", border: `1px solid ${on ? "#22c00d" : "rgba(255,255,255,0.08)"}`, position: "relative", cursor: "pointer", transition: "all 0.2s", flexShrink: 0 }}>
       <div style={{ width: 16, height: 16, background: "white", borderRadius: "50%", position: "absolute", top: 2, left: on ? 20 : 2, transition: "left 0.2s", boxShadow: "0 2px 4px rgba(0,0,0,0.3)" }} />
     </div>
   );
@@ -27,10 +27,10 @@ export default function SettingsPage() {
       </div>
 
       {/* Profile */}
-      <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 16 }}>
+      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 18, color: "#c7d2fe" }}>Profile</div>
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-          <div style={{ width: 52, height: 52, borderRadius: 14, background: "linear-gradient(135deg, #4f7cff, #8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: "white" }}>
+          <div style={{ width: 52, height: 52, borderRadius: 14, background: "linear-gradient(135deg, #22c00d, #8b5cf6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, fontWeight: 700, color: "white" }}>
             {user?.name?.split(" ").map(n => n[0]).join("") || "U"}
           </div>
           <div>
@@ -45,7 +45,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Notifications */}
-      <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 16 }}>
+      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 16 }}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 18, color: "#c7d2fe" }}>Notifications</div>
         {[
           { label: "Push notifications", sub: "Get notified when campaigns are updated", val: notifs, set: setNotifs },
@@ -62,14 +62,14 @@ export default function SettingsPage() {
       </div>
 
       {/* Coming soon */}
-      <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 24 }}>
+      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 24 }}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: "#c7d2fe" }}>Security</div>
         <div style={{ fontSize: 13, color: "#3a4055", padding: "12px 14px", background: "#0f1118", borderRadius: 8, border: "1px solid rgba(255,255,255,0.04)" }}>
           🔐 Password change and 2FA will be available after Supabase auth is connected in Step 4.
         </div>
       </div>
 
-      <button onClick={handleSave} style={{ padding: "12px 28px", background: saved ? "#10b981" : "linear-gradient(135deg, #4f7cff, #6366f1)", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s" }}>
+      <button onClick={handleSave} style={{ padding: "12px 28px", background: saved ? "#10b981" : "linear-gradient(135deg, #22c00d, #6366f1)", color: "white", border: "none", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit", transition: "all 0.2s" }}>
         {saved ? "✓ Saved!" : "Save Changes"}
       </button>
     </div>

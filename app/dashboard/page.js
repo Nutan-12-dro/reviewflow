@@ -9,13 +9,13 @@ export default function DashboardPage() {
   const urgent    = active.filter(c => c.priority === "urgent" || c.priority === "high");
 
   const stats = [
-    { label: "Active Campaigns",    value: active.length,    icon: "◉", color: "#4f7cff", bg: "rgba(79,124,255,0.1)"  },
+    { label: "Active Campaigns",    value: active.length,    icon: "◉", color: "#22c00d", bg: "rgba(79,124,255,0.1)"  },
     { label: "Completed",           value: completed.length, icon: "✓", color: "#10b981", bg: "rgba(16,185,129,0.1)"  },
     { label: "Urgent / High",       value: urgent.length,    icon: "↑", color: "#f59e0b", bg: "rgba(245,158,11,0.1)"  },
     { label: "Total Campaigns",     value: campaigns.length, icon: "▦", color: "#8b5cf6", bg: "rgba(139,92,246,0.1)"  },
   ];
 
-  const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#4f7cff", low: "#5a6480" };
+  const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
 
   return (
     <div style={{ padding: 32 }}>
@@ -33,7 +33,7 @@ export default function DashboardPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 36 }}>
         {stats.map((s, i) => (
           <div key={i} style={{
-            background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)",
+            background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 14, padding: "20px 22px",
             transition: "border-color 0.2s",
           }}>
@@ -52,15 +52,15 @@ export default function DashboardPage() {
       {/* Recent Campaigns */}
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
         {/* Active */}
-        <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, overflow: "hidden" }}>
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, overflow: "hidden" }}>
           <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 13, fontWeight: 700 }}>Recent Active Campaigns</span>
-            <a href="/campaigns/active" style={{ fontSize: 12, color: "#4f7cff", textDecoration: "none" }}>View all →</a>
+            <a href="/campaigns/active" style={{ fontSize: 12, color: "#22c00d", textDecoration: "none" }}>View all →</a>
           </div>
           {active.length === 0 ? (
             <div style={{ padding: "32px 20px", textAlign: "center", color: "#2e3348", fontSize: 13 }}>
               No active campaigns yet.<br />
-              <a href="/campaigns/create" style={{ color: "#4f7cff", textDecoration: "none", fontWeight: 500 }}>Create your first →</a>
+              <a href="/campaigns/create" style={{ color: "#22c00d", textDecoration: "none", fontWeight: 500 }}>Create your first →</a>
             </div>
           ) : (
             active.slice(0, 4).map(c => (
@@ -82,10 +82,10 @@ export default function DashboardPage() {
         </div>
 
         {/* Completed */}
-        <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, overflow: "hidden" }}>
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, overflow: "hidden" }}>
           <div style={{ padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontSize: 13, fontWeight: 700 }}>Recently Completed</span>
-            <a href="/campaigns/completed" style={{ fontSize: 12, color: "#4f7cff", textDecoration: "none" }}>View all →</a>
+            <a href="/campaigns/completed" style={{ fontSize: 12, color: "#22c00d", textDecoration: "none" }}>View all →</a>
           </div>
           {completed.length === 0 ? (
             <div style={{ padding: "32px 20px", textAlign: "center", color: "#2e3348", fontSize: 13 }}>

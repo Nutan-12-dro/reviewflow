@@ -7,7 +7,7 @@ import { useApp } from "../../layout";
 export default function CompletedCampaignsPage() {
   const { campaigns } = useApp();
   const completed = campaigns.filter(c => c.status === "completed").sort((a,b) => new Date(b.completedAt) - new Date(a.completedAt));
-  const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#4f7cff", low: "#5a6480" };
+  const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
 
   return (
     <div style={{ padding: 32 }}>
@@ -18,13 +18,13 @@ export default function CompletedCampaignsPage() {
       </div>
 
       {completed.length === 0 ? (
-        <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "60px 20px", textAlign: "center" }}>
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>🏁</div>
           <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>No completed campaigns yet</div>
           <div style={{ fontSize: 13, color: "#3a4055" }}>Mark active campaigns as complete and they'll appear here.</div>
         </div>
       ) : (
-        <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, overflow: "hidden" }}>
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, overflow: "hidden" }}>
           {/* Table header */}
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "11px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", color: "#2e3348" }}>
             <span>Campaign</span><span>Reviewer</span><span>Budget</span><span>Priority</span><span>Completed</span>

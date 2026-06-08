@@ -3,9 +3,9 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "../../layout";
 
-const REVIEWERS = ["Sam Chen", "Jordan Park", "Maya Patel", "Chris Lee", "Dana Kim"];
+const REVIEWERS = ["Nutan", "Jazee"];
 const PRIORITIES = ["urgent", "high", "medium", "low"];
-const priorityColors = { urgent: "#ef4444", high: "#f59e0b", medium: "#4f7cff", low: "#5a6480" };
+const priorityColors = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
 
 export default function CreateCampaignPage() {
   const { addCampaign } = useApp();
@@ -83,7 +83,7 @@ export default function CreateCampaignPage() {
 
       {/* Form Card */}
       <div style={{
-        background: "#0a0c12",
+        background: "#0a0a0a",
         border: "1px solid rgba(255,255,255,0.06)",
         borderRadius: 16, padding: 28,
       }}>
@@ -184,7 +184,7 @@ export default function CreateCampaignPage() {
           onClick={handleSubmit}
           style={{
             width: "100%", padding: 13,
-            background: "linear-gradient(135deg, #4f7cff, #6366f1)",
+            background: "linear-gradient(135deg, #22c00d, #6366f1)",
             color: "white", border: "none", borderRadius: 10,
             fontSize: 14, fontWeight: 600, cursor: "pointer",
             fontFamily: "inherit",

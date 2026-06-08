@@ -23,7 +23,7 @@ export default function StatsPage() {
       </div>
 
       {reviewers.length === 0 ? (
-        <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "60px 20px", textAlign: "center" }}>
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "60px 20px", textAlign: "center" }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
           <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>No data yet</div>
           <div style={{ fontSize: 13, color: "#3a4055" }}>Create campaigns and assign reviewers — stats will appear here.</div>
@@ -33,10 +33,10 @@ export default function StatsPage() {
           {reviewers.map((r, i) => {
             const pct = r.total ? Math.round((r.completed / r.total) * 100) : 0;
             const initials = r.name.split(" ").map(n => n[0]).join("");
-            const colors = ["#4f7cff","#10b981","#f59e0b","#8b5cf6","#ef4444"];
+            const colors = ["#22c00d","#10b981","#f59e0b","#8b5cf6","#ef4444"];
             const color = colors[i % colors.length];
             return (
-              <div key={i} style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "20px 24px", display: "flex", alignItems: "center", gap: 20 }}>
+              <div key={i} style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "20px 24px", display: "flex", alignItems: "center", gap: 20 }}>
                 <div style={{ width: 44, height: 44, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color, flexShrink: 0 }}>
                   {initials}
                 </div>
@@ -48,7 +48,7 @@ export default function StatsPage() {
                   <div style={{ fontSize: 12, color: "#3a4055", display: "flex", gap: 16 }}>
                     <span>{r.total} assigned</span>
                     <span style={{ color: "#10b981" }}>{r.completed} completed</span>
-                    <span style={{ color: "#4f7cff" }}>{r.active} active</span>
+                    <span style={{ color: "#22c00d" }}>{r.active} active</span>
                     <span style={{ marginLeft: "auto", fontWeight: 600, color }}>{pct}% completion rate</span>
                   </div>
                 </div>

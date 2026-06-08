@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useApp } from "../../layout";
 
-const priorityColor  = { urgent: "#ef4444", high: "#f59e0b", medium: "#4f7cff", low: "#5a6480" };
+const priorityColor  = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
 const priorityOrder  = { urgent: 0, high: 1, medium: 2, low: 3 };
 
 export default function ActiveCampaignsPage() {
@@ -38,7 +38,7 @@ export default function ActiveCampaignsPage() {
             <p style={{ fontSize: 14, color: "#5a6480", margin: 0 }}>{active.length} campaign{active.length !== 1 ? "s" : ""} in progress</p>
           </div>
           <a href="/campaigns/create" style={{
-            padding: "10px 18px", background: "linear-gradient(135deg, #4f7cff, #6366f1)",
+            padding: "10px 18px", background: "linear-gradient(135deg, #22c00d, #6366f1)",
             color: "white", borderRadius: 10, fontSize: 13, fontWeight: 600,
             textDecoration: "none", boxShadow: "0 4px 16px rgba(79,124,255,0.3)",
           }}>＋ New Campaign</a>
@@ -51,7 +51,7 @@ export default function ActiveCampaignsPage() {
           placeholder="Search campaigns or reviewers…"
           value={search} onChange={e => setSearch(e.target.value)}
           style={{
-            flex: 1, padding: "10px 14px", background: "#0a0c12",
+            flex: 1, padding: "10px 14px", background: "#0a0a0a",
             border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10,
             color: "#e8eaf2", fontSize: 13, outline: "none", fontFamily: "inherit",
           }}
@@ -59,7 +59,7 @@ export default function ActiveCampaignsPage() {
         <select
           value={sortBy} onChange={e => setSortBy(e.target.value)}
           style={{
-            padding: "10px 14px", background: "#0a0c12",
+            padding: "10px 14px", background: "#0a0a0a",
             border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10,
             color: "#e8eaf2", fontSize: 13, outline: "none",
             fontFamily: "inherit", cursor: "pointer",
@@ -75,7 +75,7 @@ export default function ActiveCampaignsPage() {
       {/* Empty state */}
       {active.length === 0 && (
         <div style={{
-          background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)",
+          background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
           borderRadius: 14, padding: "60px 20px", textAlign: "center",
         }}>
           <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
@@ -86,7 +86,7 @@ export default function ActiveCampaignsPage() {
             {search ? "Try a different search term" : "Create your first campaign to get started"}
           </div>
           {!search && (
-            <a href="/campaigns/create" style={{ color: "#4f7cff", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+            <a href="/campaigns/create" style={{ color: "#22c00d", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
               Create Campaign →
             </a>
           )}
@@ -97,7 +97,7 @@ export default function ActiveCampaignsPage() {
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
         {active.map(c => (
           <div key={c.id} style={{
-            background: "#0a0c12", border: "1px solid rgba(255,255,255,0.06)",
+            background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 14, padding: 22, transition: "border-color 0.2s",
             position: "relative", overflow: "hidden",
           }}>
@@ -157,7 +157,7 @@ export default function ActiveCampaignsPage() {
       {/* Confirm Modal */}
       {confirmId && (
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#0a0c12", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 28, width: 380, maxWidth: "100%" }}>
+          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 28, width: 380, maxWidth: "100%" }}>
             <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>Mark as Complete?</div>
             <div style={{ fontSize: 14, color: "#5a6480", marginBottom: 24 }}>
               This campaign will move to Completed Campaigns. This action can't be undone.
