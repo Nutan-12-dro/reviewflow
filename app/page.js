@@ -25,7 +25,7 @@ export default function LoginPage() {
     <div style={{ minHeight: "100vh", backgroundColor: "#000000", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", fontFamily: "system-ui, sans-serif", color: "#ffffff", padding: 20 }}>
       {/* Brand Header */}
       <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 40 }}>
-        <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #10b981 0%, #059669 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: 20, color: "#000000" }}>⚡</div>
+        <div style={{ width: 40, height: 40, borderRadius: 10, background: "linear-gradient(135deg, #3cca10 0%, #3cca10 100%)", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: "bold", fontSize: 20, color: "#000000" }}>⚡</div>
         <div>
           <div style={{ fontSize: 18, fontWeight: 700, letterSpacing: -0.5 }}>Campaign ReviewFlow</div>
           <div style={{ fontSize: 11, color: "#a3a3a3", marginTop: 1 }}>Review Management Platform</div>
@@ -35,8 +35,8 @@ export default function LoginPage() {
       {/* Auth Card Box */}
       <div style={{ width: "100%", maxWidth: 420, background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: "32px 28px", boxShadow: "0 20px 40px rgba(0,0,0,0.4)" }}>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", background: "rgba(255,255,255,0.03)", padding: 4, borderRadius: 10, marginBottom: 32, border: "1px solid rgba(255,255,255,0.04)" }}>
-          <button onClick={() => setActiveTab("signin")} style={{ padding: "8px 0", background: activeTab === "signin" ? "#10b981" : "transparent", color: activeTab === "signin" ? "#000000" : "#a3a3a3", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign In</button>
-          <button onClick={() => setActiveTab("signup")} style={{ padding: "8px 0", background: activeTab === "signup" ? "#10b981" : "transparent", color: activeTab === "signup" ? "#000000" : "#a3a3a3", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Create Account</button>
+          <button onClick={() => setActiveTab("signin")} style={{ padding: "8px 0", background: activeTab === "signin" ? "#3cca10" : "transparent", color: activeTab === "signin" ? "#000000" : "#a3a3a3", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Sign In</button>
+          <button onClick={() => setActiveTab("signup")} style={{ padding: "8px 0", background: activeTab === "signup" ? "#3cca10" : "transparent", color: activeTab === "signup" ? "#000000" : "#a3a3a3", border: "none", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Create Account</button>
         </div>
 
         <h2 style={{ fontSize: 24, fontWeight: 700, margin: "0 0 6px 0", letterSpacing: -0.5 }}>{activeTab === "signin" ? "Welcome back" : "Get started"}</h2>
