@@ -82,7 +82,7 @@ export default function LoginPage() {
             onClick={() => setActiveTab("signin")}
             style={{
               padding: "8px 0",
-              background: activeTab === "signin" ? "#10b981" : "transparent",
+              background: activeTab === "signin" ? "#0ee219" : "transparent",
               color: activeTab === "signin" ? "#000000" : "#a3a3a3",
               border: "none",
               borderRadius: 8,
@@ -98,7 +98,7 @@ export default function LoginPage() {
             onClick={() => setActiveTab("signup")}
             style={{
               padding: "8px 0",
-              background: activeTab === "signup" ? "#10b981" : "transparent",
+              background: activeTab === "signup" ? "#0ee219" : "transparent",
               color: activeTab === "signup" ? "#000000" : "#a3a3a3",
               border: "none",
               borderRadius: 8,
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 outline: "none",
                 transition: "border-color 0.2s"
               }}
-              onFocus={(e) => e.target.style.borderColor = "#10b981"}
+              onFocus={(e) => e.target.style.borderColor = "#0ee219"}
               onBlur={(e) => e.target.style.borderColor = "rgba(255,255,255,0.12)"}
               required
             />
@@ -199,7 +199,7 @@ export default function LoginPage() {
             type="submit"
             style={{
               width: "100%",
-              background: "#10b981",
+              background: "#0ee219",
               color: "#000000",
               border: "none",
               borderRadius: 10,
@@ -223,7 +223,7 @@ export default function LoginPage() {
               No account yet?{" "}
               <span 
                 onClick={() => setActiveTab("signup")}
-                style={{ color: "#10b981", cursor: "pointer", fontWeight: 500 }}
+                style={{ color: "#0ee219", cursor: "pointer", fontWeight: 500 }}
               >
                 Create one →
               </span>
@@ -233,7 +233,7 @@ export default function LoginPage() {
               Already have an account?{" "}
               <span 
                 onClick={() => setActiveTab("signin")}
-                style={{ color: "#10b981", cursor: "pointer", fontWeight: 500 }}
+                style={{ color: "#0ee219", cursor: "pointer", fontWeight: 500 }}
               >
                 Sign in instead ←
               </span>
