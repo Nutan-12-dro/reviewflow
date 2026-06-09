@@ -1,6 +1,6 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import { supabase } from "./lib/supabase";
+import  supabase  from "./lib/supabase";
 const AppContext = createContext();
 export function AppProvider({ children }) {
   const [user, setUser] = useState({ role: "admin" }); // Your current user context
