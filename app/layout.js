@@ -1,9 +1,16 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
-import  supabase  from "./lib/supabase";
+import { createClient } from "@/lib/supabase";
+
+// INITIALIZE SUPABASE CLIENT INSTANCE
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
 const AppContext = createContext();
+
 export function AppProvider({ children }) {
-  const [user, setUser] = useState({ role: "admin" }); // Your current user context
+  const [user, setUser] = useState({ role: "admin" }); 
   const [campaigns, setCampaigns] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -42,8 +49,6 @@ export function AppProvider({ children }) {
         .select();
 
       if (error) throw error;
-      
-      // Update local state smoothly with the newly saved campaign from DB
       setCampaigns((prev) => [data[0], ...prev]);
     } catch (err) {
       console.error("Error adding campaign to Supabase:", err.message);
@@ -60,7 +65,6 @@ export function AppProvider({ children }) {
 
       if (error) throw error;
 
-      // Update local state UI
       setCampaigns((prev) =>
         prev.map((c) => (c.id === id ? { ...c, status: "completed" } : c))
       );
@@ -78,8 +82,6 @@ export function AppProvider({ children }) {
         .eq("id", id);
 
       if (error) throw error;
-
-      // Remove from local UI state instantly
       setCampaigns((prev) => prev.filter((c) => c.id !== id));
     } catch (err) {
       console.error("Error deleting campaign from Supabase:", err.message);
