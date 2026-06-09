@@ -100,14 +100,19 @@ export function useApp() {
   return useContext(AppContext);
 }
 
-// 🌟 THE MISSING LINK: NEXT.JS REQUIREMENT FOR ROOT LAYOUT
+// 🌟 FIXED ROOT LAYOUT WITH SIDEBAR ALIGNMENT
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body>
-        <AppProvider>
-          {children}
-        </AppProvider>
+      <body style={{ margin: 0, padding: 0, background: "#050505", color: "#e8eaf2" }}>
+        <div style={{ display: "flex", minHeight: "100vh" }}>
+          {/* Main Content Area */}
+          <main style={{ flex: 1, minWidth: 0 }}>
+            <AppProvider>
+              {children}
+            </AppProvider>
+          </main>
+        </div>
       </body>
     </html>
   );
