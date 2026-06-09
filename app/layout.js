@@ -2,7 +2,7 @@
 import { useState, useEffect, createContext, useContext } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { createClient } from "./lib/supabase";
+import { createClient } from "@/lib/supabase";
 import "./globals.css";
 
 export const AppContext = createContext(null);
