@@ -184,6 +184,12 @@ export default function RootLayout({ children }) {
     setCampaigns(prev => prev.map(c => c.id === id ? { ...c, status: "completed", completedAt: new Date().toISOString() } : c));
   };
 
+  const deleteCampaign = (id) => {
+    if (window.confirm("Are you sure you want to delete this campaign? This cannot be undone.")) {
+      setCampaigns(prev => prev.filter(c => c.id !== id));
+    }
+  };
+
   const updateCampaign = (id, updates) => {
     setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
@@ -211,7 +217,7 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body style={{ margin: 0, fontFamily: "'Geist', 'Segoe UI', sans-serif", background: "#000000", color: "#ffffff" }}>
-        <AppContext.Provider value={{ user, campaigns, addCampaign, completeCampaign, updateCampaign }}>
+        <AppContext.Provider value={{ user, campaigns, addCampaign, completeCampaign, updateCampaign, deleteCampaign }}>
           <div style={{ display: "flex", minHeight: "100vh" }}>
             <Sidebar user={user} onSignOut={handleSignOut} />
             <main style={{ marginLeft: 248, flex: 1, minHeight: "100vh", background: "#000000" }}>
