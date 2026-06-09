@@ -103,7 +103,7 @@ export default function ActiveCampaignsPage() {
           }}>
             {user?.role === "admin" && (
   <button
-    onClick={() => deleteCampaign(campaign.id)}
+    onClick={() => deleteCampaign(c.id)}
     title="Delete Campaign"
     style={{ 
       position: "absolute", 
