@@ -179,21 +179,21 @@ export default function CreateCampaignPage() {
           </div>
         )}
 
-        {/* Submit */}
-        <button
-          onClick={handleSubmit}
-          style={{
-            width: "100%", padding: 13,
-            background: "linear-gradient(135deg, #22c00d, #6366f1)",
-            color: "white", border: "none", borderRadius: 10,
-            fontSize: 14, fontWeight: 600, cursor: "pointer",
-            fontFamily: "inherit",
-            boxShadow: "0 4px 20px rgba(79,124,255,0.3)",
-            transition: "all 0.2s",
-          }}
-        >
-          Create Campaign →
-        </button>
+       {/* Submit */}
+<button
+  type="submit" /* <--- ADD THIS LINE HERE */
+  style={{
+    width: "100%", padding: 13,
+    background: "linear-gradient(135deg, #22c00d, #6366f1)",
+    color: "white", border: "none", borderRadius: 10,
+    fontSize: 14, fontWeight: 600, cursor: "pointer",
+    fontFamily: "inherit",
+    boxShadow: "0 4px 20px rgba(79,124,255,0.3)",
+    transition: "all 0.2s",
+  }}
+>
+  Create Campaign →
+</button>
       </div>
     </div>
   );
