@@ -1,6 +1,7 @@
 "use client";
 import { createContext, useContext, useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase";
+import "./globals.css"; // Ensures your global styles don't break
 
 // INITIALIZE SUPABASE CLIENT INSTANCE
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -97,4 +98,17 @@ export function AppProvider({ children }) {
 
 export function useApp() {
   return useContext(AppContext);
+}
+
+// 🌟 THE MISSING LINK: NEXT.JS REQUIREMENT FOR ROOT LAYOUT
+export default function RootLayout({ children }) {
+  return (
+    <html lang="en">
+      <body>
+        <AppProvider>
+          {children}
+        </AppProvider>
+      </body>
+    </html>
+  );
 }

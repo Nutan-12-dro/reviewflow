@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useApp } from "../../layout";
+import { useApp } from "@/app/layout";
 
 const REVIEWERS = ["Nutan", "Jazee"];
 const PRIORITIES = ["urgent", "high", "medium", "low"];
@@ -121,6 +121,7 @@ export default function CreateCampaignPage() {
               {PRIORITIES.map(p => (
                 <button
                   key={p}
+                  type="button"
                   onClick={() => set("priority", p)}
                   style={{
                     padding: "8px 14px", borderRadius: 8, fontSize: 12, fontWeight: 600,
@@ -179,21 +180,22 @@ export default function CreateCampaignPage() {
           </div>
         )}
 
-       {/* Submit */}
-<button
-  type="submit" /* <--- ADD THIS LINE HERE */
-  style={{
-    width: "100%", padding: 13,
-    background: "linear-gradient(135deg, #22c00d, #6366f1)",
-    color: "white", border: "none", borderRadius: 10,
-    fontSize: 14, fontWeight: 600, cursor: "pointer",
-    fontFamily: "inherit",
-    boxShadow: "0 4px 20px rgba(79,124,255,0.3)",
-    transition: "all 0.2s",
-  }}
->
-  Create Campaign →
-</button>
+        {/* Submit */}
+        <button
+          type="button"
+          onClick={handleSubmit}
+          style={{
+            width: "100%", padding: 13,
+            background: "linear-gradient(135deg, #22c00d, #6366f1)",
+            color: "white", border: "none", borderRadius: 10,
+            fontSize: 14, fontWeight: 600, cursor: "pointer",
+            fontFamily: "inherit",
+            boxShadow: "0 4px 20px rgba(79,124,255,0.3)",
+            transition: "all 0.2s",
+          }}
+        >
+          Create Campaign →
+        </button>
       </div>
     </div>
   );
