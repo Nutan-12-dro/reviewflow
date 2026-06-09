@@ -166,23 +166,23 @@ export default function ActiveCampaignsPage() {
             {/* Divider */}
             <div style={{ height: 1, background: "rgba(255,255,255,0.05)", marginBottom: 14 }} />
 
-          {/* Actions */}
-          {user?.role !== "admin" && (
-          <div style={{ display: "flex", gap: 8 }}>
-            <button
-             onClick={() => setConfirmId(c.id)}
-             style={{
-               flex: 1, padding: "8px 0",
-               background: "rgba(16, 185, 129, 0.1)", color: "#10b981",
-               border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: 8,
-               fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
-               transition: "all 0.15s",
-            }}
-           >
-          ✓ Mark Complete</button>
-        </div>
-      </div>
-      )}
+           {/* Actions */}
+{user?.role !== "admin" && (
+  <div style={{ display: "flex", gap: 8 }}>
+    <button
+      onClick={() => setConfirmId(c.id)}
+      style={{
+        flex: 1, padding: "8px 0",
+        background: "rgba(16, 185, 129, 0.1)", color: "#10b981",
+        border: "1px solid rgba(16, 185, 129, 0.25)", borderRadius: 8,
+        fontSize: 12, fontWeight: 600, cursor: "pointer", fontFamily: "inherit",
+        transition: "all 0.15s",
+      }}
+    >
+      ✓ Mark Complete
+    </button>
+  </div>
+)}
 
       {/* Confirm Modal */}
       {confirmId && (
