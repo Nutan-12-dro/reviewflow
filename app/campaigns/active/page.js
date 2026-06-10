@@ -6,10 +6,11 @@ const priorityColor  = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", 
 const priorityOrder  = { urgent: 0, high: 1, medium: 2, low: 3 };
 
 export default function ActiveCampaignsPage() {
-  const { campaigns, completeCampaign, deleteCampaign, user } = useApp();
+  const { campaigns, completeCampaign, deleteCampaign, updateCampaign, user } = useApp();
   const [confirmId, setConfirmId] = useState(null);
   const [search, setSearch]       = useState("");
   const [sortBy, setSortBy]       = useState("newest");
+  const [editingReviewer, setEditingReviewer] = useState(null);
 
   const active = campaigns
     .filter(c => c.status === "active")
