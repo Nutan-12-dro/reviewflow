@@ -61,11 +61,11 @@ export default function SettingsPage() {
         ))}
       </div>
 
-      {/* Coming soon */}
+      {/* SECURITY BOX AREA */}
       <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: 24, marginBottom: 24 }}>
         <div style={{ fontSize: 13, fontWeight: 700, marginBottom: 12, color: "#c7d2fe" }}>Security</div>
         <div style={{ fontSize: 13, color: "#3a4055", padding: "12px 14px", background: "#0f1118", borderRadius: 8, border: "1px solid rgba(255,255,255,0.04)" }}>
-          🔐 Password change and 2FA will be available after Supabase auth is connected in Step 4.
+          🔐 Password Management and Two-Factor Authentication (2FA) are securely managed via Supabase Cloud.
         </div>
       </div>
 
