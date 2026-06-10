@@ -31,11 +31,24 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
-        <div style={{ width: 32, height: 32, background: "linear-gradient(135deg, #22c00d, #059669)", borderRadius: 9, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 16, boxShadow: "0 0 20px rgba(34,192,13,0.25)", flexShrink: 0, color: "#000000" }}>⚡</div>
-        <div>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: -0.2, lineHeight: 1.2, color: "#ffffff" }}>Campaign</div>
-          <div style={{ fontSize: 13, fontWeight: 700, letterSpacing: -0.2, color: "#22c00d", lineHeight: 1.2 }}>ReviewFlow</div>
-        </div>
+       {/* CUSTOM GREEN C LOGO */}
+<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, minWidth: 32 }}>
+  <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect width="100%" height="100%" rx="24" fill="#22c55e" />
+    <path d="M68 32H44V68H68V78H32V22H68V32Z" fill="#0a0a0a" />
+    <rect x="52" y="44" width="16" height="12" fill="#22c55e" />
+  </svg>
+</div>
+
+{/* BRAND TEXT */}
+<div style={{ display: "flex", flexDirection: "column", marginLeft: 12 }}>
+  <span style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: -0.3 }}>
+    Campaign
+  </span>
+  <span style={{ fontSize: 15, fontWeight: 700, color: "#a3a3a3", lineHeight: 1.1 }}>
+    ReviewFlow
+  </span>
+</div>
       </div>
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div style={{ fontSize: 10, fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase", color: "#a3a3a3", padding: "0 10px 8px" }}>
