@@ -126,7 +126,7 @@ export default function ActiveCampaignsPage() {
                 style={{ 
                   position: "absolute", 
                   top: 16, 
-                  right: 16, 
+                  right: 80, 
                   background: "rgba(239, 68, 68, 0.1)", 
                   color: "#ef4444", 
                   border: "1px solid rgba(239, 68, 68, 0.2)", 
