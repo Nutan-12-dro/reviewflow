@@ -31,17 +31,20 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
-{/* WIDE BRACKET [C] LOGO */}
-<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 38, height: 34, minWidth: 36 }}>
+{/* ACTUAL CLIP TECH SOLID BLOCK LOGO */}
+<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, minWidth: 36 }}>
   <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Left Outer Bracket [ - Thickened & Wider */}
-    <path d="M28 12H12V88H28" stroke="#22c00d" strokeWidth="18" strokeLinecap="square" strokeLinejoin="miter" />
+    {/* Symmetrical Neon Green Rounded Base Square */}
+    <rect width="100%" height="100%" rx="28" fill="#22c00d" />
     
-    {/* Right Outer Bracket ] - Thickened & Wider */}
-    <path d="M72 12H88V88H72" stroke="#22c00d" strokeWidth="18" strokeLinecap="square" strokeLinejoin="miter" />
+    {/* Left Black Bracket Cutout */}
+    <path d="M38 24H24V76H38V64H34V36H38V24Z" fill="#0a0a0a" />
     
-    {/* The Wide C in the center - Thickened to match */}
-    <path d="M60 36H42V64H60" stroke="#22c00d" strokeWidth="16" strokeLinecap="square" strokeLinejoin="miter" />
+    {/* Right Black Bracket Cutout */}
+    <path d="M62 24H76V76H62V64H66V36H62V24Z" fill="#0a0a0a" />
+    
+    {/* Center Black Inner "C" Block Cutout */}
+    <path d="M56 36H44V64H56V54H48V46H56V36Z" fill="#0a0a0a" />
   </svg>
 </div>
 
