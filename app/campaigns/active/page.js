@@ -1,11 +1,16 @@
 "use client";
-import { useApp } from "../../layout"; // Check your relative path loops here
-import { useRouter } from "next/navigation"; // 👈 1. Import Router
-import { useEffect } from "react";           // 👈 2. Import Effect
+import { useState, useEffect } from "react"; // 👈 FIXED: Added missing useState import
+import { useApp } from "../../layout"; 
+import { useRouter } from "next/navigation"; 
+
+// 👈 FIXED: Added missing color and order configurations
+const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
+const priorityOrder = { urgent: 1, high: 2, medium: 3, low: 4 };
 
 export default function ActiveCampaignsPage() {
   const { campaigns, completeCampaign, deleteCampaign, updateCampaign, user } = useApp();
   const router = useRouter();      
+  
   useEffect(() => {
     if (user && user.role !== "admin") {
       router.push("/reviewer");
@@ -15,12 +20,14 @@ export default function ActiveCampaignsPage() {
   if (user && user.role !== "admin") {
     return null; 
   }
+
   const [confirmId, setConfirmId] = useState(null);
   const [search, setSearch]       = useState("");
   const [sortBy, setSortBy]       = useState("newest");
   const [editingReviewer, setEditingReviewer] = useState(null);
 
-  const active = campaigns
+  // 👈 FIXED: Added (campaigns || []) safety check
+  const active = (campaigns || [])
     .filter(c => c.status === "active")
     .filter(c => c.title.toLowerCase().includes(search.toLowerCase()) || c.reviewer?.toLowerCase().includes(search.toLowerCase()))
     .sort((a, b) => {
@@ -119,7 +126,7 @@ export default function ActiveCampaignsPage() {
                 style={{ 
                   position: "absolute", 
                   top: 16, 
-                  right: 80, 
+                  right: 16, 
                   background: "rgba(239, 68, 68, 0.1)", 
                   color: "#ef4444", 
                   border: "1px solid rgba(239, 68, 68, 0.2)", 
@@ -148,7 +155,7 @@ export default function ActiveCampaignsPage() {
 
             {/* Top row */}
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-              <div style={{ flex: 1, paddingRight: 10 }}>
+              <div style={{ flex: 1, paddingRight: 40 }}>
                 <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 3, lineHeight: 1.3 }}>{c.title}</div>
               </div>
               <span style={{
@@ -164,18 +171,18 @@ export default function ActiveCampaignsPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 16 }}>
               <div style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "#5a6480" }}>
               <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-               <span>👤</span>
-               <span>{editingReviewer === c.id ? (
-               <select value={c.reviewer} onChange={async (e) => { await updateCampaign(c.id, { reviewer: e.target.value }); setEditingReviewer(null); }}
-               style={{ background: "#000000", border: "1px solid #22c00d", borderRadius: 6, color: "#ffffff", fontSize: 12, padding: "2px 8px", fontFamily: "inherit", outline: "none" }}>
-               <option value="Nutan">Nutan</option>
-               <option value="Jazee">Jazee</option>
-               </select>
-               ) : c.reviewer}</span>
-             </div>
-               {editingReviewer !== c.id && (
-                 <span onClick={() => setEditingReviewer(c.id)} style={{ color: "#22c00d", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "rgba(34,192,13,0.1)", padding: "2px 8px", borderRadius: 6, border: "1px solid rgba(34,192,13,0.2)" }}>↺ Change</span>
-                 )}
+                <span>👤</span>
+                <span>{editingReviewer === c.id ? (
+                <select value={c.reviewer} onChange={async (e) => { await updateCampaign(c.id, { reviewer: e.target.value }); setEditingReviewer(null); }}
+                style={{ background: "#000000", border: "1px solid #22c00d", borderRadius: 6, color: "#ffffff", fontSize: 12, padding: "2px 8px", fontFamily: "inherit", outline: "none" }}>
+                <option value="Nutan">Nutan</option>
+                <option value="Jazee">Jazee</option>
+                </select>
+                ) : c.reviewer}</span>
+              </div>
+                {editingReviewer !== c.id && (
+                  <span onClick={() => setEditingReviewer(c.id)} style={{ color: "#22c00d", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "rgba(34,192,13,0.1)", padding: "2px 8px", borderRadius: 6, border: "1px solid rgba(34,192,13,0.2)" }}>↺ Change</span>
+                  )}
             </div>
               <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#5a6480" }}>
                 <span>💰</span>
