@@ -31,20 +31,20 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
-{/* ACTUAL CLIP TECH SOLID BLOCK LOGO */}
-<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, minWidth: 36 }}>
-  <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Symmetrical Neon Green Rounded Base Square */}
-    <rect width="100%" height="100%" rx="28" fill="#22c00d" />
+{/* ACTUAL WIDE CLIP TECH LOGO */}
+<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 34, minWidth: 44 }}>
+  <svg width="100%" height="100%" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    {/* Symmetrical Wide Neon Green Rounded Base Square */}
+    <rect width="130" height="100%" rx="24" fill="#22c00d" />
     
-    {/* Left Black Bracket Cutout */}
-    <path d="M38 24H24V76H38V64H34V36H38V24Z" fill="#0a0a0a" />
+    {/* Left Black Bracket Cutout - Expanded Spacing */}
+    <path d="M46 22H26V78H46V66H36V34H46V22Z" fill="#0a0a0a" />
     
-    {/* Right Black Bracket Cutout */}
-    <path d="M62 24H76V76H62V64H66V36H62V24Z" fill="#0a0a0a" />
+    {/* Right Black Bracket Cutout - Expanded Spacing */}
+    <path d="M84 22H104V78H84V66H94V34H84V22Z" fill="#0a0a0a" />
     
-    {/* Center Black Inner "C" Block Cutout */}
-    <path d="M56 36H44V64H56V54H48V46H56V36Z" fill="#0a0a0a" />
+    {/* Center Black Inner "C" Block Cutout - Stretched Wide */}
+    <path d="M74 34H56V66H74V54H64V46H74V34Z" fill="#0a0a0a" />
   </svg>
 </div>
 
