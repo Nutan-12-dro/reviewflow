@@ -32,7 +32,7 @@ function Sidebar({ user, onSignOut }) {
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
 {/* WIDE BRACKET [C] LOGO */}
-<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, minWidth: 34 }}>
+<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 38, height: 34, minWidth: 36 }}>
   <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
     {/* Left Outer Bracket [ - Thickened & Wider */}
     <path d="M28 12H12V88H28" stroke="#22c00d" strokeWidth="18" strokeLinecap="square" strokeLinejoin="miter" />
