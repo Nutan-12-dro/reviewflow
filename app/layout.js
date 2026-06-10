@@ -31,17 +31,17 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
-{/* ACTUAL BRACKET [C] LOGO */}
+{/* WIDE BRACKET [C] LOGO */}
 <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, minWidth: 34 }}>
   <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    {/* Left Outer Bracket [ */}
-    <path d="M35 15H15V85H35" stroke="#22c00d" strokeWidth="14" strokeLinecap="square" />
+    {/* Left Outer Bracket [ - Thickened & Wider */}
+    <path d="M28 12H12V88H28" stroke="#22c00d" strokeWidth="18" strokeLinecap="square" strokeLinejoin="miter" />
     
-    {/* Right Outer Bracket ] */}
-    <path d="M65 15H85V85H65" stroke="#22c00d" strokeWidth="14" strokeLinecap="square" />
+    {/* Right Outer Bracket ] - Thickened & Wider */}
+    <path d="M72 12H88V88H72" stroke="#22c00d" strokeWidth="18" strokeLinecap="square" strokeLinejoin="miter" />
     
-    {/* The Geometric C in the center */}
-    <path d="M58 38H44V62H58" stroke="#22c00d" strokeWidth="12" strokeLinecap="square" />
+    {/* The Wide C in the center - Thickened to match */}
+    <path d="M60 36H42V64H60" stroke="#22c00d" strokeWidth="16" strokeLinecap="square" strokeLinejoin="miter" />
   </svg>
 </div>
 
