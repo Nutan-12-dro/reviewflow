@@ -24,7 +24,7 @@ export default function CompletedCampaignsPage() {
   const [fromDate, setFromDate]       = useState("");
   const [toDate, setToDate]           = useState("");
 
-  const completed = campaigns.filter(c => c.status === "completed");
+  const completed = campaigns?.filter(c => c.status === "completed") || [];
 
   // Get unique reviewers for filter dropdown
 const reviewers = [...new Set((completed || []).map(c => c.reviewer))].filter(Boolean);

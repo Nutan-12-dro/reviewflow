@@ -8,7 +8,7 @@ const PRIORITIES = ["urgent", "high", "medium", "low"];
 const priorityColors = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
 
 export default function CreateCampaignPage() {
-  const { addCampaign } = useApp();
+  const { user, addCampaign } = useApp();
   const router = useRouter();
   useEffect(() => {
     if (user && user.role !== "admin") {
