@@ -1,12 +1,20 @@
 "use client";
-import { useState, useMemo } from "react";
-import { useApp } from "../../layout";
-
-const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#a3a3a3" };
+import { useApp } from "../../layout"; 
+import { useRouter } from "next/navigation"; 
+import { useEffect } from "react";     
 
 export default function CompletedCampaignsPage() {
   const { campaigns } = useApp();
+  const router = useRouter();
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      router.push("/reviewer");
+    }
+  }, [user, router]);
 
+  if (user && user.role !== "admin") {
+    return null; 
+  }
   const [search, setSearch]           = useState("");
   const [sortBy, setSortBy]           = useState("newest");
   const [filterPriority, setFilterPriority] = useState("all");

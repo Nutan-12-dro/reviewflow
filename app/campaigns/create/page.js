@@ -10,7 +10,15 @@ const priorityColors = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", 
 export default function CreateCampaignPage() {
   const { addCampaign } = useApp();
   const router = useRouter();
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      router.push("/reviewer");
+    }
+  }, [user, router]);
 
+  if (user && user.role !== "admin") {
+    return null; 
+  }
   const [form, setForm] = useState({
     title:    "",
     reviewer: "",
