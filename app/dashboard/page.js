@@ -1,9 +1,25 @@
 "use client";
 import { useApp } from "../layout";
+import { useRouter } from "next/navigation"; // 👈 1. Import Next.js router
+import { useEffect } from "react";           // 👈 2. Import React effect
 
 export default function DashboardPage() {
   const { user, campaigns } = useApp();
+  const router = useRouter();                // 👈 3. Initialize router
 
+  // 🛑 4. THE BOUNCER: Kick reviewers out of the manager dashboard
+  useEffect(() => {
+    if (user && user.role !== "admin") {
+      router.push("/reviewer");
+    }
+  }, [user, router]);
+
+  // 🙈 5. Prevent the manager screen from flashing while they get redirected
+  if (user && user.role !== "admin") {
+    return null; 
+  }
+
+  // 👇 YOUR EXISTING CODE STAYS EXACTLY THE SAME BELOW THIS LINE
   const active    = campaigns.filter(c => c.status === "active");
   const completed = campaigns.filter(c => c.status === "completed");
   const urgent    = active.filter(c => c.priority === "urgent" || c.priority === "high");
