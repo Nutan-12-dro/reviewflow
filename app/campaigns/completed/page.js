@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect } from "react";     
 
 export default function CompletedCampaignsPage() {
-  const { campaigns } = useApp();
+  const { user, campaigns } = useApp(); // 👈 MAKE SURE "user" IS ADDED HERE!
   const router = useRouter();
   useEffect(() => {
     if (user && user.role !== "admin") {
