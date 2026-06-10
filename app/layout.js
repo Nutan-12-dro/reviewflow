@@ -31,12 +31,20 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
-       {/* CUSTOM GREEN C LOGO */}
-<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, minWidth: 32 }}>
+      {/* CUSTOM NEON C LOGO */}
+<div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, minWidth: 34 }}>
   <svg width="100%" height="100%" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="100%" height="100%" rx="24" fill="#22c55e" />
-    <path d="M68 32H44V68H68V78H32V22H68V32Z" fill="#0a0a0a" />
-    <rect x="52" y="44" width="16" height="12" fill="#22c55e" />
+    {/* Outermost smooth rounded container matching your exact app neon */}
+    <rect width="100%" height="100%" rx="20" fill="#22c00d" /> 
+    
+    {/* Clean, thick geometric bracket cutout */}
+    <path 
+      d="M70 28H46V72H70V84H28V16H70V28Z" 
+      fill="#0a0a0a" 
+    />
+    
+    {/* Perfect center inner core block */}
+    <rect x="54" y="44" width="16" height="12" fill="#22c00d" />
   </svg>
 </div>
 
