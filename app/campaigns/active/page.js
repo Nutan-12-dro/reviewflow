@@ -153,10 +153,21 @@ export default function ActiveCampaignsPage() {
 
             {/* Meta */}
             <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 16 }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#5a6480" }}>
-                <span>👤</span>
-                <span>{c.reviewer}</span>
-              </div>
+              <div style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "#5a6480" }}>
+              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
+               <span>👤</span>
+               <span>{editingReviewer === c.id ? (
+               <select value={c.reviewer} onChange={async (e) => { await updateCampaign(c.id, { reviewer: e.target.value }); setEditingReviewer(null); }}
+               style={{ background: "#000000", border: "1px solid #22c00d", borderRadius: 6, color: "#ffffff", fontSize: 12, padding: "2px 8px", fontFamily: "inherit", outline: "none" }}>
+               <option value="Nutan">Nutan</option>
+               <option value="Jazee">Jazee</option>
+               </select>
+               ) : c.reviewer}</span>
+             </div>
+               {editingReviewer !== c.id && (
+                 <span onClick={() => setEditingReviewer(c.id)} style={{ color: "#22c00d", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "rgba(34,192,13,0.1)", padding: "2px 8px", borderRadius: 6, border: "1px solid rgba(34,192,13,0.2)" }}>↺ Change</span>
+                 )}
+            </div>
               <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#5a6480" }}>
                 <span>💰</span>
                 <span>{c.budget}</span>
