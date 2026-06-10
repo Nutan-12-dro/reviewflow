@@ -75,12 +75,19 @@ function AuthPage({ onLogin }) {
   const [loading, setLoading] = useState(false);
   const supabase = createClient();
 
-  const handleLogin = async () => {
+const handleLogin = async () => {
     setLoading(true); setError(""); setMessage("");
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) { setError(error.message); setLoading(false); return; }
+    
     const { data: profile } = await supabase.from("profiles").select("*").eq("id", data.user.id).single();
-    onLogin({ id: data.user.id, email: data.user.email, name: profile?.full_name || data.user.email, role: profile?.role || "reviewer" });
+    
+    onLogin({ 
+      id: data.user.id, 
+      email: data.user.email, 
+      name: profile?.full_name || data.user.email, 
+      role: profile?.role || "admin" // ⚡ Default to admin if table entry is missing
+    });
     setLoading(false);
   };
 
@@ -88,10 +95,37 @@ function AuthPage({ onLogin }) {
     setLoading(true); setError(""); setMessage("");
     if (!name.trim()) { setError("Please enter your name."); setLoading(false); return; }
     if (password.length < 6) { setError("Password must be at least 6 characters."); setLoading(false); return; }
-    const { error } = await supabase.auth.signUp({ email, password, options: { data: { full_name: name } } });
+    
+    // 1. Create the user credentials in Supabase Auth
+    const { data, error } = await supabase.auth.signUp({ 
+      email, 
+      password, 
+      options: { data: { full_name: name } } 
+    });
+    
     if (error) { setError(error.message); setLoading(false); return; }
-    setMessage("Account created! You can now sign in.");
-    setMode("login"); setLoading(false);
+    
+    // 2. AUTOMATICALLY create their database profile row right now!
+    if (data?.user) {
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .insert([
+          { 
+            id: data.user.id,        // Uses their unique ID automatically
+            full_name: name,         // Saves the name they typed
+            role: "admin", // ⚡ NOW ADMIN BY DEFAULT FOR SEAMLESS DEMOS!
+            email: email
+          }
+        ]);
+        
+      if (profileError) {
+        console.error("Automated profile creation failed:", profileError.message);
+      }
+    }
+
+    setMessage("Account created successfully! You can now sign in.");
+    setMode("login"); 
+    setLoading(false);
   };
 
   return (
