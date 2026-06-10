@@ -139,7 +139,7 @@ export default function ReviewerCompletedPage() {
           <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "11px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 11, fontWeight: 700, letterSpacing: 0.5, textTransform: "uppercase", color: "#a3a3a3" }}>
             <span>Campaign</span><span>Reviewer</span><span>Budget</span><span>Priority</span><span>Completed</span>
           </div>
-          {filtered.map(c => {
+          {filtered?.map(c => {
             const isMe = c.reviewer?.toLowerCase() === user?.name?.toLowerCase();
             return (
               <div key={c.id}

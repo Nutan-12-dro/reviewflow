@@ -47,7 +47,7 @@ export default function DashboardPage() {
 
       {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16, marginBottom: 36 }}>
-        {stats.map((s, i) => (
+        {stats?.map((s, i) => (
           <div key={i} style={{
             background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 14, padding: "20px 22px",
@@ -79,7 +79,7 @@ export default function DashboardPage() {
               <a href="/campaigns/create" style={{ color: "#22c00d", textDecoration: "none", fontWeight: 500 }}>Create your first →</a>
             </div>
           ) : (
-            active.slice(0, 4).map(c => (
+            active?.slice(0, 4)?.map(c => (
               <div key={c.id} style={{ padding: "13px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{c.title}</div>
@@ -108,7 +108,7 @@ export default function DashboardPage() {
               No completed campaigns yet.
             </div>
           ) : (
-            completed.slice(0, 4).map(c => (
+            completed?.slice(0, 4)?.map(c => (
               <div key={c.id} style={{ padding: "13px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
                 <div>
                   <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{c.title}</div>

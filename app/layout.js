@@ -53,7 +53,7 @@ function Sidebar({ user, onSignOut }) {
   <span style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: -0.3 }}>
     Campaign
   </span>
-  <span style={{ fontSize: 15, fontWeight: 700, color: "#11c738", lineHeight: 1.1 }}>
+  <span style={{ fontSize: 15, fontWeight: 700, color: "#26e20d", lineHeight: 1.1 }}>
     ReviewFlow
   </span>
 </div>

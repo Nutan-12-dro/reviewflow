@@ -104,7 +104,7 @@ export default function ActiveCampaignsPage() {
 
       {/* Campaign Cards */}
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
-        {active.map(c => (
+        {active?.map(c => (
           <div key={c.id} style={{
             background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
             borderRadius: 14, padding: 22, transition: "border-color 0.2s",

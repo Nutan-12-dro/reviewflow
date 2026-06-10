@@ -27,8 +27,7 @@ export default function CompletedCampaignsPage() {
   const completed = campaigns.filter(c => c.status === "completed");
 
   // Get unique reviewers for filter dropdown
-  const reviewers = [...new Set(completed.map(c => c.reviewer).filter(Boolean))];
-
+const reviewers = [...new Set((completed || []).map(c => c.reviewer))].filter(Boolean);
   const filtered = useMemo(() => {
     return completed
       .filter(c => {
@@ -67,7 +66,7 @@ export default function CompletedCampaignsPage() {
   // Export to CSV
   const exportCSV = () => {
     const headers = ["Title", "Reviewer", "Priority", "Budget", "Deadline", "Completed At"];
-    const rows = filtered.map(c => [
+    const rows = filtered?.map(c => [
       c.title, c.reviewer, c.priority, c.budget, c.deadline,
       c.completed_at ? new Date(c.completed_at).toLocaleDateString() : ""
     ]);
@@ -185,7 +184,7 @@ export default function CompletedCampaignsPage() {
             <span>Priority</span>
             <span>Completed</span>
           </div>
-          {filtered.map(c => (
+          {filtered?.map(c => (
             <div key={c.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", alignItems: "center", transition: "background 0.15s" }}
               onMouseEnter={e => e.currentTarget.style.background = "#0f0f0f"}
               onMouseLeave={e => e.currentTarget.style.background = "transparent"}>
