@@ -8,7 +8,6 @@ import "./globals.css";
 export const AppContext = createContext(null);
 export function useApp() { return useContext(AppContext); }
 
-// 👑 RESTORED: All Admin Navigation links intact
 const ADMIN_NAV = [
   { path: "/dashboard",           icon: "▦", label: "Dashboard"           },
   { path: "/campaigns/create",    icon: "＋", label: "Create Campaign"     },
@@ -18,7 +17,6 @@ const ADMIN_NAV = [
   { path: "/settings",            icon: "⚙", label: "Settings"            },
 ];
 
-// 👑 RESTORED: All Reviewer Navigation links intact
 const REVIEWER_NAV = [
   { path: "/reviewer",           icon: "◉", label: "My Campaigns" },
   { path: "/reviewer/completed", icon: "✓", label: "Completed"    },
@@ -33,27 +31,17 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       
-      {/* Header with Custom Logo */}
+      {/* Clip Tech Custom Logo */}
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
-        
-        {/* 👑 RESTORED: THE ACTUAL WIDE CLIP TECH LOGO SVG */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 34, minWidth: 44 }}>
           <svg width="100%" height="100%" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-            {/* Symmetrical Wide Neon Green Rounded Base Square */}
             <rect width="130" height="100%" rx="24" fill="#22c00d" />
-            
-            {/* Left Black Bracket Cutout - Expanded Spacing */}
             <path d="M46 22H26V78H46V66H36V34H46V22Z" fill="#0a0a0a" />
-            
-            {/* Right Black Bracket Cutout - Expanded Spacing */}
             <path d="M84 22H104V78H84V66H94V34H84V22Z" fill="#0a0a0a" />
-            
-            {/* Center Black Inner "C" Block Cutout - Stretched Wide */}
             <path d="M74 34H56V66H74V54H64V46H74V34Z" fill="#0a0a0a" />
           </svg>
         </div>
 
-        {/* BRAND TEXT */}
         <div style={{ display: "flex", flexDirection: "column", marginLeft: 4 }}>
           <span className="font-display" style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: -0.3 }}>
             Campaign
@@ -64,7 +52,7 @@ function Sidebar({ user, onSignOut }) {
         </div>
       </div>
 
-      {/* Navigation Layer */}
+      {/* Dynamic Nav Layer */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -80,14 +68,14 @@ function Sidebar({ user, onSignOut }) {
         })}
       </nav>
 
-      {/* Profile / Sign Out Footer */}
+      {/* Profile Footer */}
       <div style={{ padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #22c00d, #059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" }}>
-          {user?.name?.split(" ").map(n => n[0]).join("") || user?.email?.[0]?.toUpperCase() || "U"}
+          {user?.name?.split(" ").map(n => n[0]).join("") || "A"}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>{user?.name || user?.email}</div>
-          <div style={{ fontSize: 11, color: "#22c00d", textTransform: "capitalize", fontWeight: 600 }}>{user?.role || "reviewer"}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>{user?.name || "Admin"}</div>
+          <div style={{ fontSize: 11, color: "#22c00d", textTransform: "capitalize", fontWeight: 600 }}>{user?.role}</div>
         </div>
         <button onClick={onSignOut} style={{ background: "none", border: "none", color: "#a3a3a3", cursor: "pointer", fontSize: 16, padding: 4 }}>⏻</button>
       </div>
@@ -108,8 +96,8 @@ export default function RootLayout({ children }) {
         setUser({
           id:    session.user.id,
           email: session.user.email,
-          name:  profile?.full_name || session.user.email,
-          role:  profile?.role || "reviewer",
+          name:  profile?.full_name || session.user.user_metadata?.full_name || "Admin User",
+          role:  profile?.role || "admin", // 👑 FIXED: Force 'admin' fallback on refresh to keep panel open
         });
       }
       setLoading(false);
@@ -147,15 +135,7 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
-  if (loading) {
-    return (
-      <html lang="en">
-        <body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-          <div style={{ color: "#22c00d", fontSize: 14 }}>Loading…</div>
-        </body>
-      </html>
-    );
-  }
+  if (loading) return <html lang="en"><body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#22c00d" }}>Loading…</body></html>;
 
   return (
     <html lang="en">
