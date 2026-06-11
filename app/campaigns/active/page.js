@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useApp } from "../../layout";
 import Link from "next/link";
 
@@ -12,6 +12,9 @@ export default function ActiveCampaignsPage() {
   const [search, setSearch]                   = useState("");
   const [sortBy, setSortBy]                   = useState("newest");
   const [editingReviewer, setEditingReviewer] = useState(null);
+  const [mounted, setMounted]                 = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none", fontFamily:"Inter,sans-serif" };
 
@@ -25,6 +28,8 @@ export default function ActiveCampaignsPage() {
       if (sortBy==="deadline") return new Date(a.deadline)-new Date(b.deadline);
       return 0;
     });
+
+  if (!mounted) return null;
 
   return (
     <div style={{ padding:"36px 40px", background:"#000", minHeight:"100vh" }}>

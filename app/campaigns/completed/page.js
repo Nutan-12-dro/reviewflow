@@ -1,11 +1,14 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { useApp } from "../../layout";
 
 const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#a3a3a3" };
 
 export default function CompletedCampaignsPage() {
   const { campaigns } = useApp();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
 
   const [search, setSearch]                 = useState("");
   const [sortBy, setSortBy]                 = useState("newest");
@@ -26,9 +29,11 @@ export default function CompletedCampaignsPage() {
         if (q && !c.title?.toLowerCase().includes(q) && !c.reviewer?.toLowerCase().includes(q)) return false;
         if (filterPriority !== "all" && c.priority !== filterPriority) return false;
         if (filterReviewer !== "all" && c.reviewer !== filterReviewer) return false;
+        
         const budget = parseFloat((c.budget || "0").replace(/[^0-9.]/g, ""));
         if (minBudget && budget < parseFloat(minBudget)) return false;
         if (maxBudget && budget > parseFloat(maxBudget)) return false;
+        
         if (fromDate && new Date(c.completed_at) < new Date(fromDate)) return false;
         if (toDate && new Date(c.completed_at) > new Date(toDate)) return false;
         return true;
@@ -65,6 +70,8 @@ export default function CompletedCampaignsPage() {
     const a = document.createElement("a"); a.href = url; a.download = "completed-campaigns.csv"; a.click();
     URL.revokeObjectURL(url);
   };
+
+  if (!mounted) return null;
 
   const inputStyle = { width: "100%", padding: "10px 12px", background: "#000000", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#ffffff", fontSize: 13, outline: "none", fontFamily: "inherit" };
   const labelStyle = { display: "block", fontSize: 10, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase", color: "#a3a3a3", marginBottom: 6 };
@@ -142,33 +149,40 @@ export default function CompletedCampaignsPage() {
         </div>
       </div>
 
-      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, overflow: "hidden" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#a3a3a3" }}>
-          <span>Campaign</span>
-          <span>Reviewer</span>
-          <span>Budget</span>
-          <span>Priority</span>
-          <span>Completed Date</span>
+      {filtered.length === 0 ? (
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: "60px 20px", textAlign: "center" }}>
+          <div style={{ fontSize: 40, marginBottom: 12 }}>🏁</div>
+          <div style={{ fontSize: 16, fontWeight: 600, color: "#fff" }}>No campaigns match your filters</div>
         </div>
-        {filtered.map(c => (
-          <div key={c.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", alignItems: "center" }}>
-            <div>
-              <div style={{ fontSize: 14, fontWeight: 600, color: "#ffffff", marginBottom: 2 }}>{c.title}</div>
-              {c.deadline && <div style={{ fontSize: 11, color: "#a3a3a3" }}>Deadline: {c.deadline}</div>}
-            </div>
-            <span style={{ fontSize: 13, color: "#a3a3a3" }}>{c.reviewer}</span>
-            <span style={{ fontSize: 13, color: "#22c00d", fontWeight: 600 }}>{c.budget}</span>
-            <div>
-              <span className="badge" style={{ color: priorityColor[c.priority] || "#a3a3a3", background: `${priorityColor[c.priority]}15`, border: `1px solid ${priorityColor[c.priority]}30` }}>
-                {c.priority}
+      ) : (
+        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, overflow: "hidden" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.06)", fontSize: 11, fontWeight: 700, textTransform: "uppercase", color: "#a3a3a3" }}>
+            <span>Campaign</span>
+            <span>Reviewer</span>
+            <span>Budget</span>
+            <span>Priority</span>
+            <span>Completed Date</span>
+          </div>
+          {filtered.map(c => (
+            <div key={c.id} style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr", padding: "14px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)", alignItems: "center" }}>
+              <div>
+                <div style={{ fontSize: 14, fontWeight: 600, color: "#ffffff", marginBottom: 2 }}>{c.title}</div>
+                {c.deadline && <div style={{ fontSize: 11, color: "#a3a3a3" }}>Deadline: {c.deadline}</div>}
+              </div>
+              <span style={{ fontSize: 13, color: "#a3a3a3" }}>{c.reviewer}</span>
+              <span style={{ fontSize: 13, color: "#22c00d", fontWeight: 600 }}>{c.budget}</span>
+              <div>
+                <span className="badge" style={{ color: priorityColor[c.priority] || "#a3a3a3", background: `${priorityColor[c.priority]}15`, border: `1px solid ${priorityColor[c.priority]}30` }}>
+                  {c.priority}
+                </span>
+              </div>
+              <span style={{ fontSize: 12, color: "#a3a3a3" }}>
+                {c.completed_at ? new Date(c.completed_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
               </span>
             </div>
-            <span style={{ fontSize: 12, color: "#a3a3a3" }}>
-              {c.completed_at ? new Date(c.completed_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }) : "—"}
-            </span>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
