@@ -29,7 +29,16 @@ export default function CreateCampaignPage() {
     if (!form.deadline)        eList.deadline = "Deadline is required";
     
     if (Object.keys(eList).length > 0) { setErrors(eList); return; }
-    await addCampaign(form);
+
+    // 🛡️ SANITIZATION HACK: Strips $, spaces, and commas so the DB never rejects it
+    const cleanBudget = form.budget.replace(/[^0-9.]/g, "");
+    const formattedBudget = cleanBudget ? `$${parseFloat(cleanBudget).toLocaleString()}` : form.budget;
+
+    await addCampaign({
+      ...form,
+      budget: formattedBudget
+    });
+
     setSubmitted(true);
     setTimeout(() => router.push("/campaigns/active"), 1200);
   };
