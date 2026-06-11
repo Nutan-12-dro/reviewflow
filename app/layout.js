@@ -37,7 +37,7 @@ function Sidebar({ user, onSignOut }) {
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
       
-      {/* Clip Tech Symmetrical Custom C Logo */}
+      {/* Symmetrical Custom C Logo */}
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 34, minWidth: 44 }}>
           <svg width="100%" height="100%" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -53,7 +53,7 @@ function Sidebar({ user, onSignOut }) {
         </div>
       </div>
 
-      {/* Nav Link Tree */}
+      {/* Navigation trees */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -99,7 +99,7 @@ export default function RootLayout({ children }) {
       if (session) {
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
         setUser({
-          id:    session.user.id,
+          id:    session.user.id, // 🛡️ Ensure ID maps correctly
           email: profile?.email || session.user.email,
           name:  profile?.full_name || profile?.name || session.user.user_metadata?.full_name || "Nutan",
           role:  profile?.role || "admin", 
@@ -117,6 +117,7 @@ export default function RootLayout({ children }) {
   };
 
   const addCampaign = async (campaign) => {
+    if (!user?.id) return; // 🛡️ Prevent crash if user session is resolving
     const { data, error } = await supabase.from("campaigns")
       .insert([{ 
         title: campaign.title, 

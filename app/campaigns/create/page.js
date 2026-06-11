@@ -20,14 +20,16 @@ export default function CreateCampaignPage() {
     setErrors(prev => ({ ...prev, [key]: "" }));
   };
 
-  const handleSubmit = async () => {
-    const e = {};
-    if (!form.title.trim())    e.title = "Title is required";
-    if (!form.reviewer)        e.reviewer = "Reviewer is required";
-    if (!form.budget.trim())   e.budget = "Budget is required";
-    if (!form.deadline)        e.deadline = "Deadline is required";
+  const handleSubmit = async (e) => {
+    e.preventDefault(); // 🛡️ Prevent full browser reload behavior
+    const eList = {};
+    if (!form.title.trim())    eList.title = "Title is required";
+    if (!form.reviewer)        eList.reviewer = "Reviewer is required";
+    if (!form.budget.trim())   eList.budget = "Budget is required";
+    if (!form.deadline)        eList.deadline = "Deadline is required";
     
-    if (Object.keys(e).length > 0) { setErrors(e); return; }
+    if (Object.keys(eList).length > 0) { setErrors(eList); return; }
+    
     await addCampaign(form);
     setSubmitted(true);
     setTimeout(() => router.push("/campaigns/active"), 1200);
@@ -57,7 +59,7 @@ export default function CreateCampaignPage() {
         <h1 className="page-title">Create Campaign</h1>
       </div>
 
-      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 32 }}>
+      <form onSubmit={handleSubmit} style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 32 }}>
         <div style={{ marginBottom: 24 }}>
           <label className="section-label">Campaign Title</label>
           <input style={inputStyle("title")} placeholder="e.g. Project Edit Workspace" value={form.title} onChange={e => set("title", e.target.value)} />
@@ -91,8 +93,8 @@ export default function CreateCampaignPage() {
           <input type="date" style={{ ...inputStyle("deadline"), colorScheme: "dark" }} value={form.deadline} onChange={e => set("deadline", e.target.value)} />
         </div>
 
-        <button type="button" onClick={handleSubmit} className="btn-primary" style={{ width: "100%", padding: 14, borderRadius: 10, fontSize: 14, cursor: "pointer" }}>Create Campaign →</button>
-      </div>
+        <button type="submit" className="btn-primary" style={{ width: "100%", padding: 14, borderRadius: 10, fontSize: 14, cursor: "pointer" }}>Create Campaign →</button>
+      </form>
     </div>
   );
 }
