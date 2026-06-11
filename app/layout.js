@@ -25,15 +25,17 @@ const REVIEWER_NAV = [
 
 function Sidebar({ user, onSignOut }) {
   const pathname = usePathname();
-  
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => { setMounted(true); }, []);
+  if (!mounted) return null;
+
   const roleString = (user?.role || "admin").toLowerCase().trim();
   const isAdmin = roleString === "admin" || roleString === "manager";
   const NAV = isAdmin ? ADMIN_NAV : REVIEWER_NAV;
 
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
-      
-      {/* Clip Tech Custom Logo */}
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 34, minWidth: 44 }}>
           <svg width="100%" height="100%" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -43,18 +45,12 @@ function Sidebar({ user, onSignOut }) {
             <path d="M74 34H56V66H74V54H64V46H74V34Z" fill="#0a0a0a" />
           </svg>
         </div>
-
         <div style={{ display: "flex", flexDirection: "column", marginLeft: 4 }}>
-          <span className="font-display" style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: -0.3 }}>
-            Campaign
-          </span>
-          <span style={{ fontSize: 15, fontWeight: 700, color: "#22c00d", lineHeight: 1.1 }}>
-            ReviewFlow
-          </span>
+          <span className="font-display" style={{ fontSize: 16, fontWeight: 800, color: "#ffffff", lineHeight: 1.1, letterSpacing: -0.3 }}>Campaign</span>
+          <span style={{ fontSize: 15, fontWeight: 700, color: "#22c00d", lineHeight: 1.1 }}>ReviewFlow</span>
         </div>
       </div>
 
-      {/* Navigation Layer */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -70,13 +66,11 @@ function Sidebar({ user, onSignOut }) {
         })}
       </nav>
 
-      {/* Profile Info Footer */}
       <div style={{ padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #22c00d, #059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" }}>
           {user?.name?.split(" ").map(n => n[0]).join("") || "N"}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          {/* 👑 DEEP FALLBACK TO FORCE DISPLAY OF YOUR NAME */}
           <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>
             {user?.name || "Nutan"}
           </div>
@@ -105,8 +99,7 @@ export default function RootLayout({ children }) {
         setUser({
           id:    session.user.id,
           email: session.user.email,
-          // Comprehensive name property lookup check
-          name:  profile?.full_name || profile?.name || profile?.display_name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || "Nutan",
+          name:  profile?.full_name || profile?.name || session.user.user_metadata?.full_name || "Nutan",
           role:  profile?.role || "admin", 
         });
       }
@@ -114,10 +107,7 @@ export default function RootLayout({ children }) {
     });
   }, []);
 
-  useEffect(() => {
-    if (!user) return;
-    fetchCampaigns();
-  }, [user]);
+  useEffect(() => { if (user) fetchCampaigns(); }, [user]);
 
   const fetchCampaigns = async () => {
     const { data, error } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
@@ -145,24 +135,8 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
-  // 🛡️ CRITICAL: COMPLETELY SUPPRESSES NEXT.JS HYDRATION DEATH (ERROR 418) BY RENDERING STATIC BLACK TEXTURE ON SERVER
-  if (!mounted) {
-    return (
-      <html lang="en">
-        <body style={{ background: "#000" }} />
-      </html>
-    );
-  }
-
-  if (loading) {
-    return (
-      <html lang="en">
-        <body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
-          <div style={{ color: "#22c00d", fontSize: 14 }}>Loading…</div>
-        </body>
-      </html>
-    );
-  }
+  if (!mounted) return <html lang="en"><body style={{ background: "#000" }} /></html>;
+  if (loading) return <html lang="en"><body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#22c00d" }}>Loading…</body></html>;
 
   return (
     <html lang="en">
