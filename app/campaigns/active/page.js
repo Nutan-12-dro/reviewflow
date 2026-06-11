@@ -90,19 +90,6 @@ export default function ActiveCampaignsPage() {
           </div>
         ))}
       </div>
-
-      {confirmId && (
-        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center" }}>
-          <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.1)", borderRadius:16, padding:28, width:400 }}>
-            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff" }}>Mark as Complete?</div>
-            <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:24 }}>
-              <button onClick={()=>setConfirmId(null)} style={{ padding:"9px 18px", background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, color:"#a3a3a3", cursor:"pointer" }}>Cancel</button>
-              <button onClick={async ()=>{await completeCampaign(confirmId);setConfirmId(null);}} style={{ padding:"9px 20px", background:"#22c00d", border:"none", borderRadius:10, color:"#000", fontWeight:700, cursor:"pointer" }}>✓ Complete</button>
-            </div>
-          </div>
-        </div>
-      )}
-
       {deleteId && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center" }}>
           <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:28, width:400 }}>
