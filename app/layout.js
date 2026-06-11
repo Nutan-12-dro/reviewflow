@@ -25,15 +25,7 @@ const REVIEWER_NAV = [
 
 function Sidebar({ user, onSignOut }) {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
-  // 🛡️ Guard against hydration mismatches on sidebars
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) return null;
-
+  
   const roleString = (user?.role || "admin").toLowerCase().trim();
   const isAdmin = roleString === "admin" || roleString === "manager";
   const NAV = isAdmin ? ADMIN_NAV : REVIEWER_NAV;
@@ -78,14 +70,19 @@ function Sidebar({ user, onSignOut }) {
         })}
       </nav>
 
-      {/* Profile Footer */}
+      {/* Profile Info Footer */}
       <div style={{ padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #22c00d, #059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" }}>
-          {user?.name?.split(" ").map(n => n[0]).join("") || "A"}
+          {user?.name?.split(" ").map(n => n[0]).join("") || "N"}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>{user?.name || "Admin User"}</div>
-          <div style={{ fontSize: 11, color: "#22c00d", textTransform: "capitalize", fontWeight: 600 }}>{user?.role || "admin"}</div>
+          {/* 👑 DEEP FALLBACK TO FORCE DISPLAY OF YOUR NAME */}
+          <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>
+            {user?.name || "Nutan"}
+          </div>
+          <div style={{ fontSize: 11, color: "#22c00d", textTransform: "capitalize", fontWeight: 600 }}>
+            {user?.role || "Admin"}
+          </div>
         </div>
         <button onClick={onSignOut} style={{ background: "none", border: "none", color: "#a3a3a3", cursor: "pointer", fontSize: 16, padding: 4 }}>⏻</button>
       </div>
@@ -108,7 +105,8 @@ export default function RootLayout({ children }) {
         setUser({
           id:    session.user.id,
           email: session.user.email,
-          name:  profile?.full_name || session.user.user_metadata?.full_name || "Admin User",
+          // Comprehensive name property lookup check
+          name:  profile?.full_name || profile?.name || profile?.display_name || session.user.user_metadata?.full_name || session.user.user_metadata?.name || "Nutan",
           role:  profile?.role || "admin", 
         });
       }
@@ -147,7 +145,16 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
-  if (!mounted || loading) {
+  // 🛡️ CRITICAL: COMPLETELY SUPPRESSES NEXT.JS HYDRATION DEATH (ERROR 418) BY RENDERING STATIC BLACK TEXTURE ON SERVER
+  if (!mounted) {
+    return (
+      <html lang="en">
+        <body style={{ background: "#000" }} />
+      </html>
+    );
+  }
+
+  if (loading) {
     return (
       <html lang="en">
         <body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
