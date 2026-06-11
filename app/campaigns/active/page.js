@@ -1,6 +1,6 @@
 "use client";
 import { useState } from "react";
-import { useApp } from "../layout";
+import { useApp } from "../../layout";
 import Link from "next/link";
 
 const PC = { urgent:"#ef4444", high:"#f59e0b", medium:"#22c00d", low:"#555" };
@@ -33,7 +33,7 @@ export default function ActiveCampaignsPage() {
         <div>
           <div className="section-label">Campaign Management</div>
           <h1 className="page-title">Active Campaigns</h1>
-          <p style={{ fontSize:14, color:"#555", marginTop:4 }}>{active.length} campaign{active.length!==1?"s":""} in progress</p>
+          <p style={{ fontSize:14, color:"#555", marginTop:4 }}>{active.length} campaign in progress</p>
         </div>
         <Link href="/campaigns/create" className="btn-primary" style={{ padding:"11px 20px", color:"#000", borderRadius:10, fontSize:13, fontWeight:700, textDecoration:"none", boxShadow:"0 4px 20px rgba(34,192,13,0.3)" }}>
           + New Campaign
@@ -50,7 +50,6 @@ export default function ActiveCampaignsPage() {
         </select>
       </div>
 
-      {/* 👑 RESTORED ORIGINAL SHARP COMPACT CAMPAIGN CARD INTERFACE */}
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(340px,1fr))", gap:16 }}>
         {active.map(c=>(
           <div key={c.id} className="card-hover" style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:14, padding:24, position:"relative", overflow:"hidden" }}>
@@ -98,7 +97,7 @@ export default function ActiveCampaignsPage() {
             <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff" }}>Mark as Complete?</div>
             <div style={{ display:"flex", gap:10, justifyContent:"flex-end", marginTop:24 }}>
               <button onClick={()=>setConfirmId(null)} style={{ padding:"9px 18px", background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, color:"#a3a3a3", cursor:"pointer" }}>Cancel</button>
-              <button onClick={async ()=>{await completeCampaign(confirmId);setConfirmId(null);}} style={{ padding:"9px 20px", background:"#22c00d", border:"none", borderRadius:10, color:"000", fontWeight:700, cursor:"pointer" }}>✓ Complete</button>
+              <button onClick={async ()=>{await completeCampaign(confirmId);setConfirmId(null);}} style={{ padding:"9px 20px", background:"#22c00d", border:"none", borderRadius:10, color:"#000", fontWeight:700, cursor:"pointer" }}>✓ Complete</button>
             </div>
           </div>
         </div>
