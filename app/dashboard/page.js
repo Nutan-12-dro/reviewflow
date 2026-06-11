@@ -1,5 +1,5 @@
 "use client";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "../layout";
 import Link from "next/link";
@@ -7,15 +7,30 @@ import Link from "next/link";
 export default function DashboardPage() {
   const { user, campaigns } = useApp();
   const router = useRouter();
+  const [currentDate, setCurrentDate] = useState("");
 
-  // 🛡️ FIXED: Absolute block if user isn't fully loaded as an admin
+  // 🛡️ Safe Client-Side Date Rendering (Kills Hydration Mismatch #418)
   useEffect(() => {
-    if (!user || user.role !== "admin") {
+    setCurrentDate(
+      new Date().toLocaleDateString("en-US", {
+        weekday: "long",
+        month: "long",
+        day: "numeric",
+        year: "numeric"
+      })
+    );
+  }, []);
+
+  // 🛡️ Safe Security Bouncer Loop
+  const isAdmin = user?.role?.toLowerCase()?.trim() === "admin";
+
+  useEffect(() => {
+    if (user && !isAdmin) {
       router.push("/reviewer");
     }
-  }, [user, router]);
+  }, [user, isAdmin, router]);
 
-  if (!user || user.role !== "admin") {
+  if (!user || !isAdmin) {
     return null; 
   }
 
@@ -44,10 +59,10 @@ export default function DashboardPage() {
       <div style={{ marginBottom: 36 }}>
         <div className="section-label">Manager Overview</div>
         <h1 className="page-title">
-          Good to see you, {user?.name?.split(" ")[0]} 👋
+          Good to see you, {user?.name || "Nutan"} 👋
         </h1>
         <p style={{ fontSize: 14, color: "#555", marginTop: 4 }}>
-          {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}
+          {currentDate}
         </p>
       </div>
 
@@ -67,7 +82,6 @@ export default function DashboardPage() {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 18, color: s.color, marginBottom: 16,
             }}>{s.icon}</div>
-            {/* 🛡️ FIXED: Swapped font-family to clean standard numbers */}
             <div className="stat-number" style={{
               fontSize: 36, fontWeight: 800, color: s.color,
               fontFamily: "'Inter', sans-serif", letterSpacing: "-0.5px", lineHeight: 1,

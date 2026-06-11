@@ -11,18 +11,20 @@ export default function ActiveCampaignsPage() {
   const { campaigns, completeCampaign, deleteCampaign, updateCampaign, user } = useApp();
   const router = useRouter();
   
-  const [confirmId, setConfirmId]             = useState(null);
-  const [deleteId, setDeleteId]               = useState(null);
-  const [search, setSearch]                   = useState("");
-  const [sortBy, setSortBy]                   = useState("newest");
-  const [editingReviewer, setEditingReviewer] = useState(null);
+const { campaigns, completeCampaign, deleteCampaign, updateCampaign, user } = useApp();
+  const router = useRouter();
 
-  // 🛡️ FIXED BOUNCER LOOP
+  const isAdmin = user?.role?.toLowerCase()?.trim() === "admin";
+
   useEffect(() => {
-    if (!user || user.role !== "admin") {
+    if (user && !isAdmin) {
       router.push("/reviewer");
     }
-  }, [user, router]);
+  }, [user, isAdmin, router]);
+
+  if (!user || !isAdmin) {
+    return null; 
+  }
 
   if (!user || user.role !== "admin") {
     return null; 

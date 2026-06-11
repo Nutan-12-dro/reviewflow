@@ -7,19 +7,20 @@ const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", l
 
 export default function CompletedCampaignsPage() {
   const { user, campaigns } = useApp(); 
+  const { user, campaigns } = useApp(); 
   const router = useRouter();
 
-  // 🛡️ FIXED BOUNCER LOOP
+  const isAdmin = user?.role?.toLowerCase()?.trim() === "admin";
+
   useEffect(() => {
-    if (!user || user.role !== "admin") {
+    if (user && !isAdmin) {
       router.push("/reviewer");
     }
-  }, [user, router]);
+  }, [user, isAdmin, router]);
 
-  if (!user || user.role !== "admin") {
+  if (!user || !isAdmin) {
     return null; 
   }
-
   const [search, setSearch]                 = useState("");
   const [sortBy, setSortBy]                 = useState("newest");
   const [filterPriority, setFilterPriority] = useState("all");
