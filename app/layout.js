@@ -88,45 +88,87 @@ export default function RootLayout({ children }) {
   const [user, setUser]           = useState(null);
   const [loading, setLoading]     = useState(true);
   const [campaigns, setCampaigns] = useState([]);
+  const [mounted, setMounted]     = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
+    setMounted(true);
+    
+    // Fetch session immediately on mount
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
-        const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
-        setUser({
-          id:    session.user.id,
-          email: profile?.email || session.user.email,
-          name:  profile?.full_name || profile?.name || session.user.user_metadata?.full_name || "Nutan",
-          role:  profile?.role || "admin", 
-        });
+        await fetchUserProfile(session.user);
+      } else {
+        setLoading(false);
       }
-      setLoading(false);
     });
+
+    // Listen to real-time auth changes to protect against blank states on fast reloads
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session) {
+        await fetchUserProfile(session.user);
+      } else {
+        setUser(null);
+        setCampaigns([]);
+        setLoading(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
-  useEffect(() => { if (user) fetchCampaigns(); }, [user]);
+  const fetchUserProfile = async (authUser) => {
+    const { data: profile } = await supabase.from("profiles").select("*").eq("id", authUser.id).single();
+    setUser({
+      id:    authUser.id,
+      email: profile?.email || authUser.email,
+      name:  profile?.full_name || profile?.name || authUser.user_metadata?.full_name || "Nutan",
+      role:  profile?.role || "admin", 
+    });
+  };
+
+  // Fetch campaigns automatically whenever the user object successfully updates
+  useEffect(() => {
+    if (user) {
+      fetchCampaigns();
+    }
+  }, [user]);
 
   const fetchCampaigns = async () => {
     const { data, error } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
-    if (!error && data) setCampaigns(data);
+    if (!error && data) {
+      setCampaigns(data);
+    }
+    setLoading(false);
   };
 
   const addCampaign = async (campaign) => {
     if (!user?.id) return;
-    const { data, error } = await supabase.from("campaigns")
-      .insert([{ 
-        title: campaign.title, 
-        reviewer: campaign.reviewer, 
-        priority: campaign.priority, 
-        budget: campaign.budget, 
-        deadline: campaign.deadline, 
-        status: "active", 
-        created_by: user.id 
-      }])
+    
+    const { data, error } = await supabase
+      .from("campaigns")
+      .insert([
+        { 
+          title: campaign.title, 
+          reviewer: campaign.reviewer, 
+          priority: campaign.priority.toLowerCase().trim(), 
+          budget: campaign.budget, 
+          deadline: campaign.deadline, 
+          status: "active", 
+          created_by: user.id 
+        }
+      ])
       .select()
       .single();
-    if (!error && data) setCampaigns(prev => [data, ...prev]);
+
+    if (error) {
+      console.error("Supabase rejected insertion:", error.message);
+      return;
+    }
+
+    if (data) {
+      setCampaigns(prev => [data, ...prev]);
+    }
   };
 
   const completeCampaign = async (id) => {
@@ -145,6 +187,7 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
+  if (!mounted) return <html lang="en"><body style={{ background: "#000" }} /></html>;
   if (loading) return <html lang="en"><body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#22c00d" }}>Loading…</body></html>;
 
   return (
