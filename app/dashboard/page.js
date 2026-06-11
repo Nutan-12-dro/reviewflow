@@ -8,18 +8,17 @@ export default function DashboardPage() {
   const { user, campaigns } = useApp();
   const router = useRouter();
 
-  // 🛡️ PRESERVED SECURITY BOUNCER
+  // 🛡️ FIXED: Absolute block if user isn't fully loaded as an admin
   useEffect(() => {
-    if (user && user.role !== "admin") {
+    if (!user || user.role !== "admin") {
       router.push("/reviewer");
     }
   }, [user, router]);
 
-  if (user && user.role !== "admin") {
+  if (!user || user.role !== "admin") {
     return null; 
   }
 
-  // 🛡️ PRESERVED DATA FALLBACK SAFETY
   const allCampaigns = campaigns || [];
   const active       = allCampaigns.filter(c => c.status === "active");
   const completed    = allCampaigns.filter(c => c.status === "completed");
@@ -68,9 +67,10 @@ export default function DashboardPage() {
               display: "flex", alignItems: "center", justifyContent: "center",
               fontSize: 18, color: s.color, marginBottom: 16,
             }}>{s.icon}</div>
+            {/* 🛡️ FIXED: Swapped font-family to clean standard numbers */}
             <div className="stat-number" style={{
               fontSize: 36, fontWeight: 800, color: s.color,
-              fontFamily: "'Syne', sans-serif", letterSpacing: -1, lineHeight: 1,
+              fontFamily: "'Inter', sans-serif", letterSpacing: "-0.5px", lineHeight: 1,
             }}>{s.value}</div>
             <div style={{ fontSize: 12, color: "#555", marginTop: 6, fontWeight: 500, letterSpacing: 0.2 }}>{s.label}</div>
           </div>

@@ -9,13 +9,14 @@ export default function CompletedCampaignsPage() {
   const { user, campaigns } = useApp(); 
   const router = useRouter();
 
+  // 🛡️ FIXED BOUNCER LOOP
   useEffect(() => {
-    if (user && user.role !== "admin") {
+    if (!user || user.role !== "admin") {
       router.push("/reviewer");
     }
   }, [user, router]);
 
-  if (user && user.role !== "admin") {
+  if (!user || user.role !== "admin") {
     return null; 
   }
 

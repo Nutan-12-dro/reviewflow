@@ -17,20 +17,19 @@ export default function ActiveCampaignsPage() {
   const [sortBy, setSortBy]                   = useState("newest");
   const [editingReviewer, setEditingReviewer] = useState(null);
 
-  // 🛡️ PRESERVED SECURITY BOUNCER
+  // 🛡️ FIXED BOUNCER LOOP
   useEffect(() => {
-    if (user && user.role !== "admin") {
+    if (!user || user.role !== "admin") {
       router.push("/reviewer");
     }
   }, [user, router]);
 
-  if (user && user.role !== "admin") {
+  if (!user || user.role !== "admin") {
     return null; 
   }
 
   const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none", fontFamily:"Inter,sans-serif" };
 
-  // 🛡️ PRESERVED DATA FALLBACK SAFETY
   const active = (campaigns || [])
     .filter(c => c.status === "active")
     .filter(c => c.title?.toLowerCase().includes(search.toLowerCase()) || c.reviewer?.toLowerCase().includes(search.toLowerCase()))
@@ -78,16 +77,11 @@ export default function ActiveCampaignsPage() {
       <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(340px,1fr))", gap:16 }}>
         {active.map(c=>(
           <div key={c.id} className="card-hover" style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:14, padding:24, position:"relative", overflow:"hidden" }}>
-
             <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:PC[c.priority]||"#333" }} />
-
             <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
               <div style={{ fontSize:15, fontWeight:700, color:"#fff", lineHeight:1.3, flex:1, paddingRight:12 }}>{c.title}</div>
               <div style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
-                {user?.role==="admin" && (
-                  <button onClick={()=>setDeleteId(c.id)} className="btn-danger"
-                    style={{ width:32, height:32, borderRadius:8, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>🗑</button>
-                )}
+                <button onClick={()=>setDeleteId(c.id)} className="btn-danger" style={{ width:32, height:32, borderRadius:8, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>🗑</button>
                 <span className="badge" style={{ color:PC[c.priority], background:`${PC[c.priority]}15`, border:`1px solid ${PC[c.priority]}30` }}>{c.priority?.toUpperCase()}</span>
               </div>
             </div>
@@ -97,16 +91,14 @@ export default function ActiveCampaignsPage() {
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <span>👤</span>
                   {editingReviewer===c.id ? (
-                    <select value={c.reviewer} onChange={async e=>{await updateCampaign(c.id,{reviewer:e.target.value});setEditingReviewer(null);}}
-                      style={{ background:"#000", border:"1px solid #22c00d", borderRadius:6, color:"#fff", fontSize:12, padding:"3px 8px", outline:"none" }}>
+                    <select value={c.reviewer} onChange={async e=>{await updateCampaign(c.id,{reviewer:e.target.value});setEditingReviewer(null);}} style={{ background:"#000", border:"1px solid #22c00d", borderRadius:6, color:"#fff", fontSize:12, padding:"3px 8px", outline:"none" }}>
                       <option value="Nutan">Nutan</option>
                       <option value="Jazee">Jazee</option>
                     </select>
                   ) : <span style={{ fontWeight:500, color:"#fff" }}>{c.reviewer}</span>}
                 </div>
-                {editingReviewer!==c.id && user?.role==="admin" && (
-                  <button onClick={()=>setEditingReviewer(c.id)} className="btn-ghost"
-                    style={{ fontSize:11, fontWeight:600, borderRadius:6, padding:"3px 9px", cursor:"pointer" }}>↺ Change</button>
+                {editingReviewer!==c.id && (
+                  <button onClick={()=>setEditingReviewer(c.id)} className="btn-ghost" style={{ fontSize:11, fontWeight:600, borderRadius:6, padding:"3px 9px", cursor:"pointer" }}>↺ Change</button>
                 )}
               </div>
               <div style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, color:"#a3a3a3" }}>
@@ -116,13 +108,7 @@ export default function ActiveCampaignsPage() {
                 <span>📅</span><span>Due <strong style={{ color:"#fff" }}>{c.deadline}</strong></span>
               </div>
             </div>
-
             <div style={{ height:1, background:"rgba(255,255,255,0.06)", marginBottom:14 }} />
-
-            {user?.role!=="admin" && (
-              <button onClick={()=>setConfirmId(c.id)}
-                style={{ width:"100%", padding:"10px 0", background:"rgba(34,192,13,0.1)", color:"#22c00d", border:"1px solid rgba(34,192,13,0.25)", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer" }}>✓ Mark as Complete</button>
-            )}
           </div>
         ))}
       </div>
@@ -130,7 +116,7 @@ export default function ActiveCampaignsPage() {
       {confirmId && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.1)", borderRadius:16, padding:28, width:400 }}>
-            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff", fontFamily:"Syne,sans-serif" }}>Mark as Complete?</div>
+            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff" }}>Mark as Complete?</div>
             <div style={{ fontSize:14, color:"#555", marginBottom:24 }}>This campaign moves to Completed. Cannot be undone.</div>
             <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
               <button onClick={()=>setConfirmId(null)} style={{ padding:"9px 18px", background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, color:"#a3a3a3", fontSize:13, cursor:"pointer" }}>Cancel</button>
@@ -143,7 +129,7 @@ export default function ActiveCampaignsPage() {
       {deleteId && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
           <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:28, width:400 }}>
-            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff", fontFamily:"Syne,sans-serif" }}>Delete Campaign?</div>
+            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff" }}>Delete Campaign?</div>
             <div style={{ fontSize:14, color:"#555", marginBottom:24 }}>This will permanently delete the campaign.</div>
             <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
               <button onClick={()=>setDeleteId(null)} style={{ padding:"9px 18px", background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, color:"#a3a3a3", fontSize:13, cursor:"pointer" }}>Cancel</button>

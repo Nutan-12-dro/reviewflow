@@ -11,13 +11,14 @@ export default function CreateCampaignPage() {
   const { user, addCampaign } = useApp();
   const router = useRouter();
 
+  // 🛡️ FIXED BOUNCER LOOP
   useEffect(() => {
-    if (user && user.role !== "admin") {
+    if (!user || user.role !== "admin") {
       router.push("/reviewer");
     }
   }, [user, router]);
 
-  if (user && user.role !== "admin") {
+  if (!user || user.role !== "admin") {
     return null; 
   }
 
@@ -60,7 +61,7 @@ export default function CreateCampaignPage() {
       <div style={{ padding: 32, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-          <div className="font-display" style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Campaign Created!</div>
+          <div style={{ fontSize: 22, fontWeight: 700, marginBottom: 8 }}>Campaign Created!</div>
           <div style={{ fontSize: 14, color: "#a3a3a3" }}>Redirecting to Active Campaigns…</div>
         </div>
       </div>
