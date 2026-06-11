@@ -1,16 +1,23 @@
 "use client";
-import { useState, useEffect } from "react"; // 👈 FIXED: Added missing useState import
-import { useApp } from "../../layout"; 
-import { useRouter } from "next/navigation"; 
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
+import { useApp } from "../../layout";
+import Link from "next/link";
 
-// 👈 FIXED: Added missing color and order configurations
-const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#5a6480" };
-const priorityOrder = { urgent: 1, high: 2, medium: 3, low: 4 };
+const PC = { urgent:"#ef4444", high:"#f59e0b", medium:"#22c00d", low:"#555" };
+const PO = { urgent:0, high:1, medium:2, low:3 };
 
 export default function ActiveCampaignsPage() {
   const { campaigns, completeCampaign, deleteCampaign, updateCampaign, user } = useApp();
-  const router = useRouter();      
+  const router = useRouter();
   
+  const [confirmId, setConfirmId]             = useState(null);
+  const [deleteId, setDeleteId]               = useState(null);
+  const [search, setSearch]                   = useState("");
+  const [sortBy, setSortBy]                   = useState("newest");
+  const [editingReviewer, setEditingReviewer] = useState(null);
+
+  // 🛡️ PRESERVED SECURITY BOUNCER
   useEffect(() => {
     if (user && user.role !== "admin") {
       router.push("/reviewer");
@@ -21,66 +28,36 @@ export default function ActiveCampaignsPage() {
     return null; 
   }
 
-  const [confirmId, setConfirmId] = useState(null);
-  const [search, setSearch]       = useState("");
-  const [sortBy, setSortBy]       = useState("newest");
-  const [editingReviewer, setEditingReviewer] = useState(null);
+  const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none", fontFamily:"Inter,sans-serif" };
 
-  // 👈 FIXED: Added (campaigns || []) safety check
+  // 🛡️ PRESERVED DATA FALLBACK SAFETY
   const active = (campaigns || [])
     .filter(c => c.status === "active")
-    .filter(c => c.title.toLowerCase().includes(search.toLowerCase()) || c.reviewer?.toLowerCase().includes(search.toLowerCase()))
-    .sort((a, b) => {
-      if (sortBy === "newest")   return b.id - a.id;
-      if (sortBy === "oldest")   return a.id - b.id;
-      if (sortBy === "priority") return priorityOrder[a.priority] - priorityOrder[b.priority];
-      if (sortBy === "deadline") return new Date(a.deadline) - new Date(b.deadline);
+    .filter(c => c.title?.toLowerCase().includes(search.toLowerCase()) || c.reviewer?.toLowerCase().includes(search.toLowerCase()))
+    .sort((a,b) => {
+      if (sortBy==="newest")   return b.id - a.id;
+      if (sortBy==="oldest")   return a.id - b.id;
+      if (sortBy==="priority") return PO[a.priority]-PO[b.priority];
+      if (sortBy==="deadline") return new Date(a.deadline)-new Date(b.deadline);
       return 0;
     });
 
-  const handleComplete = (id) => {
-    completeCampaign(id);
-    setConfirmId(null);
-  };
-
   return (
-    <div style={{ padding: 32 }}>
-      {/* Header */}
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase", color: "#2e3348", marginBottom: 6 }}>Campaign Management</div>
-        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-          <div>
-            <h1 style={{ fontSize: 26, fontWeight: 700, margin: "0 0 4px", letterSpacing: -0.5 }}>Active Campaigns</h1>
-            <p style={{ fontSize: 14, color: "#5a6480", margin: 0 }}>{active.length} campaign{active.length !== 1 ? "s" : ""} in progress</p>
-          </div>
-          <a href="/campaigns/create" style={{
-            padding: "10px 18px", background: "linear-gradient(135deg, #22c00d, #6366f1)",
-            color: "white", borderRadius: 10, fontSize: 13, fontWeight: 600,
-            textDecoration: "none", boxShadow: "0 4px 16px rgba(79,124,255,0.3)",
-          }}>＋ New Campaign</a>
+    <div style={{ padding:"36px 40px", background:"#000", minHeight:"100vh" }}>
+      <div style={{ display:"flex", alignItems:"flex-end", justifyContent:"space-between", marginBottom:28 }}>
+        <div>
+          <div className="section-label">Campaign Management</div>
+          <h1 className="page-title">Active Campaigns</h1>
+          <p style={{ fontSize:14, color:"#555", marginTop:4 }}>{active.length} campaign{active.length!==1?"s":""} in progress</p>
         </div>
+        <Link href="/campaigns/create" className="btn-primary" style={{ padding:"11px 20px", color:"#000", borderRadius:10, fontSize:13, fontWeight:700, textDecoration:"none", boxShadow:"0 4px 20px rgba(34,192,13,0.3)" }}>
+          + New Campaign
+        </Link>
       </div>
 
-      {/* Toolbar */}
-      <div style={{ display: "flex", gap: 12, marginBottom: 20, alignItems: "center" }}>
-        <input
-          placeholder="Search campaigns or reviewers…"
-          value={search} onChange={e => setSearch(e.target.value)}
-          style={{
-            flex: 1, padding: "10px 14px", background: "#0a0a0a",
-            border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10,
-            color: "#e8eaf2", fontSize: 13, outline: "none", fontFamily: "inherit",
-          }}
-        />
-        <select
-          value={sortBy} onChange={e => setSortBy(e.target.value)}
-          style={{
-            padding: "10px 14px", background: "#0a0a0a",
-            border: "1px solid rgba(255,255,255,0.07)", borderRadius: 10,
-            color: "#e8eaf2", fontSize: 13, outline: "none",
-            fontFamily: "inherit", cursor: "pointer",
-          }}
-        >
+      <div style={{ display:"flex", gap:12, marginBottom:24 }}>
+        <input placeholder="Search campaigns or reviewers…" value={search} onChange={e=>setSearch(e.target.value)} style={{...iS, flex:1}} />
+        <select value={sortBy} onChange={e=>setSortBy(e.target.value)} style={{...iS, cursor:"pointer"}}>
           <option value="newest">Newest first</option>
           <option value="oldest">Oldest first</option>
           <option value="priority">By priority</option>
@@ -88,157 +65,89 @@ export default function ActiveCampaignsPage() {
         </select>
       </div>
 
-      {/* Empty state */}
-      {active.length === 0 && (
-        <div style={{
-          background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
-          borderRadius: 14, padding: "60px 20px", textAlign: "center",
-        }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📭</div>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>
-            {search ? "No campaigns match your search" : "No active campaigns yet"}
+      {active.length===0 && (
+        <div style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:14 }}>
+          <div className="empty-state">
+            <div className="empty-state-icon">📭</div>
+            <div className="empty-state-title">{search?"No campaigns match":"No active campaigns"}</div>
+            <div className="empty-state-sub">{search?"Try a different search":<Link href="/campaigns/create" style={{color:"#22c00d",textDecoration:"none"}}>Create your first →</Link>}</div>
           </div>
-          <div style={{ fontSize: 13, color: "#3a4055", marginBottom: 20 }}>
-            {search ? "Try a different search term" : "Create your first campaign to get started"}
-          </div>
-          {!search && (
-            <a href="/campaigns/create" style={{ color: "#22c00d", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
-              Create Campaign →
-            </a>
-          )}
         </div>
       )}
 
-      {/* Campaign Cards */}
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 16 }}>
-        {active?.map(c => (
-          <div key={c.id} style={{
-            background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)",
-            borderRadius: 14, padding: 22, transition: "border-color 0.2s",
-            position: "relative", overflow: "hidden",
-          }}>
-            
-            {/* Delete Campaign Dustbin Icon (Admins Only) */}
-            {user?.role === "admin" && (
-              <button
-                onClick={() => deleteCampaign(c.id)}
-                title="Delete Campaign"
-                style={{ 
-                  position: "absolute", 
-                  top: 16, 
-                  right: 80, 
-                  background: "rgba(239, 68, 68, 0.1)", 
-                  color: "#ef4444", 
-                  border: "1px solid rgba(239, 68, 68, 0.2)", 
-                  borderRadius: 8, 
-                  width: 32, 
-                  height: 32, 
-                  display: "flex", 
-                  alignItems: "center", 
-                  justifyContent: "center", 
-                  cursor: "pointer", 
-                  transition: "all 0.2s",
-                  zIndex: 10
-                }}
-              >
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                  <polyline points="3 6 5 6 21 6"></polyline>
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  <line x1="10" y1="11" x2="10" y2="17"></line>
-                  <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-              </button>
-            )}
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill, minmax(340px,1fr))", gap:16 }}>
+        {active.map(c=>(
+          <div key={c.id} className="card-hover" style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:14, padding:24, position:"relative", overflow:"hidden" }}>
 
-            {/* Priority stripe */}
-            <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 3, background: priorityColor[c.priority] || "#2e3348", opacity: 0.7 }} />
+            <div style={{ position:"absolute", top:0, left:0, right:0, height:2, background:PC[c.priority]||"#333" }} />
 
-            {/* Top row */}
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 12 }}>
-              <div style={{ flex: 1, paddingRight: 40 }}>
-                <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 3, lineHeight: 1.3 }}>{c.title}</div>
-              </div>
-              <span style={{
-                fontSize: 10, fontWeight: 700, padding: "3px 9px", borderRadius: 6,
-                textTransform: "uppercase", flexShrink: 0,
-                color: priorityColor[c.priority] || "#5a6480",
-                background: `${priorityColor[c.priority]}15` || "rgba(90,100,128,0.1)",
-                border: `1px solid ${priorityColor[c.priority]}30`,
-              }}>{c.priority}</span>
-            </div>
-
-            {/* Meta */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 16 }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", justifyContent: "space-between", fontSize: 12, color: "#5a6480" }}>
-              <div style={{ display: "flex", gap: 6, alignItems: "center" }}>
-                <span>👤</span>
-                <span>{editingReviewer === c.id ? (
-                <select value={c.reviewer} onChange={async (e) => { await updateCampaign(c.id, { reviewer: e.target.value }); setEditingReviewer(null); }}
-                style={{ background: "#000000", border: "1px solid #22c00d", borderRadius: 6, color: "#ffffff", fontSize: 12, padding: "2px 8px", fontFamily: "inherit", outline: "none" }}>
-                <option value="Nutan">Nutan</option>
-                <option value="Jazee">Jazee</option>
-                </select>
-                ) : c.reviewer}</span>
-              </div>
-                {editingReviewer !== c.id && (
-                  <span onClick={() => setEditingReviewer(c.id)} style={{ color: "#22c00d", cursor: "pointer", fontSize: 11, fontWeight: 600, background: "rgba(34,192,13,0.1)", padding: "2px 8px", borderRadius: 6, border: "1px solid rgba(34,192,13,0.2)" }}>↺ Change</span>
-                  )}
-            </div>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#5a6480" }}>
-                <span>💰</span>
-                <span>{c.budget}</span>
-              </div>
-              <div style={{ display: "flex", gap: 6, alignItems: "center", fontSize: 12, color: "#5a6480" }}>
-                <span>📅</span>
-                <span>Due {c.deadline}</span>
+            <div style={{ display:"flex", justifyContent:"space-between", alignItems:"flex-start", marginBottom:14 }}>
+              <div style={{ fontSize:15, fontWeight:700, color:"#fff", lineHeight:1.3, flex:1, paddingRight:12 }}>{c.title}</div>
+              <div style={{ display:"flex", gap:8, alignItems:"center", flexShrink:0 }}>
+                {user?.role==="admin" && (
+                  <button onClick={()=>setDeleteId(c.id)} className="btn-danger"
+                    style={{ width:32, height:32, borderRadius:8, cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"center", fontSize:13 }}>🗑</button>
+                )}
+                <span className="badge" style={{ color:PC[c.priority], background:`${PC[c.priority]}15`, border:`1px solid ${PC[c.priority]}30` }}>{c.priority?.toUpperCase()}</span>
               </div>
             </div>
 
-            {/* Divider */}
-            <div style={{ height: 1, background: "rgba(255,255,255,0.05)", marginBottom: 14 }} />
-
-            {/* Actions (Reviewers Only) */}
-            {user?.role !== "admin" && (
-              <div style={{ display: "flex", gap: 8 }}>
-                <button
-                  onClick={() => setConfirmId(c.id)}
-                  style={{
-                    flex: 1,
-                    padding: "8px 0",
-                    background: "rgba(16, 185, 129, 0.1)",
-                    color: "#10b981",
-                    border: "1px solid rgba(16, 185, 129, 0.25)",
-                    borderRadius: 8,
-                    fontSize: 12,
-                    fontWeight: 600,
-                    cursor: "pointer",
-                    fontFamily: "inherit",
-                    transition: "all 0.15s",
-                  }}
-                >
-                  ✓ Mark Complete
-                </button>
+            <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
+              <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:13 }}>
+                <div style={{ display:"flex", alignItems:"center", gap:8 }}>
+                  <span>👤</span>
+                  {editingReviewer===c.id ? (
+                    <select value={c.reviewer} onChange={async e=>{await updateCampaign(c.id,{reviewer:e.target.value});setEditingReviewer(null);}}
+                      style={{ background:"#000", border:"1px solid #22c00d", borderRadius:6, color:"#fff", fontSize:12, padding:"3px 8px", outline:"none" }}>
+                      <option value="Nutan">Nutan</option>
+                      <option value="Jazee">Jazee</option>
+                    </select>
+                  ) : <span style={{ fontWeight:500, color:"#fff" }}>{c.reviewer}</span>}
+                </div>
+                {editingReviewer!==c.id && user?.role==="admin" && (
+                  <button onClick={()=>setEditingReviewer(c.id)} className="btn-ghost"
+                    style={{ fontSize:11, fontWeight:600, borderRadius:6, padding:"3px 9px", cursor:"pointer" }}>↺ Change</button>
+                )}
               </div>
+              <div style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, color:"#a3a3a3" }}>
+                <span>💰</span><span style={{ color:"#22c00d", fontWeight:600 }}>{c.budget}</span>
+              </div>
+              <div style={{ display:"flex", alignItems:"center", gap:8, fontSize:13, color:"#a3a3a3" }}>
+                <span>📅</span><span>Due <strong style={{ color:"#fff" }}>{c.deadline}</strong></span>
+              </div>
+            </div>
+
+            <div style={{ height:1, background:"rgba(255,255,255,0.06)", marginBottom:14 }} />
+
+            {user?.role!=="admin" && (
+              <button onClick={()=>setConfirmId(c.id)}
+                style={{ width:"100%", padding:"10px 0", background:"rgba(34,192,13,0.1)", color:"#22c00d", border:"1px solid rgba(34,192,13,0.25)", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer" }}>✓ Mark as Complete</button>
             )}
           </div>
         ))}
       </div>
 
-      {/* Confirm Modal */}
       {confirmId && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.7)", zIndex: 200, display: "flex", alignItems: "center", justifyContent: "center", padding: 20 }}>
-          <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 28, width: 380, maxWidth: "100%" }}>
-            <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 10 }}>Mark as Complete?</div>
-            <div style={{ fontSize: 14, color: "#5a6480", marginBottom: 24 }}>
-              This campaign will move to Completed Campaigns. This action can't be undone.
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+          <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.1)", borderRadius:16, padding:28, width:400 }}>
+            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff", fontFamily:"Syne,sans-serif" }}>Mark as Complete?</div>
+            <div style={{ fontSize:14, color:"#555", marginBottom:24 }}>This campaign moves to Completed. Cannot be undone.</div>
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+              <button onClick={()=>setConfirmId(null)} style={{ padding:"9px 18px", background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, color:"#a3a3a3", fontSize:13, cursor:"pointer" }}>Cancel</button>
+              <button onClick={()=>{completeCampaign(confirmId);setConfirmId(null);}} style={{ padding:"9px 20px", background:"#22c00d", border:"none", borderRadius:10, color:"#000", fontSize:13, fontWeight:700, cursor:"pointer" }}>✓ Complete</button>
             </div>
-            <div style={{ display: "flex", gap: 10, justifyContent: "flex-end" }}>
-              <button onClick={() => setConfirmId(null)} style={{ padding: "9px 18px", background: "none", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 10, color: "#5a6480", fontSize: 14, cursor: "pointer", fontFamily: "inherit" }}>
-                Cancel
-              </button>
-              <button onClick={() => handleComplete(confirmId)} style={{ padding: "9px 18px", background: "#10b981", border: "none", borderRadius: 10, color: "white", fontSize: 14, fontWeight: 600, cursor: "pointer", fontFamily: "inherit" }}>
-                ✓ Yes, Complete
-              </button>
+          </div>
+        </div>
+      )}
+
+      {deleteId && (
+        <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center", padding:20 }}>
+          <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:28, width:400 }}>
+            <div style={{ fontSize:18, fontWeight:700, marginBottom:8, color:"#fff", fontFamily:"Syne,sans-serif" }}>Delete Campaign?</div>
+            <div style={{ fontSize:14, color:"#555", marginBottom:24 }}>This will permanently delete the campaign.</div>
+            <div style={{ display:"flex", gap:10, justifyContent:"flex-end" }}>
+              <button onClick={()=>setDeleteId(null)} style={{ padding:"9px 18px", background:"none", border:"1px solid rgba(255,255,255,0.1)", borderRadius:10, color:"#a3a3a3", fontSize:13, cursor:"pointer" }}>Cancel</button>
+              <button onClick={()=>deleteCampaign(deleteId)&&setDeleteId(null)||setDeleteId(null)} style={{ padding:"9px 20px", background:"#ef4444", border:"none", borderRadius:10, color:"#fff", fontSize:13, fontWeight:700, cursor:"pointer" }}>Delete</button>
             </div>
           </div>
         </div>
