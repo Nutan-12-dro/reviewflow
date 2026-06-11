@@ -25,7 +25,9 @@ const REVIEWER_NAV = [
 
 function Sidebar({ user, onSignOut }) {
   const pathname = usePathname();
-  const isAdmin = user?.role === "admin";
+  
+  // 🛡️ CASE-INSENSITIVE SAFETY CHECK
+  const isAdmin = user?.role?.toLowerCase()?.trim() === "admin";
   const NAV = isAdmin ? ADMIN_NAV : REVIEWER_NAV;
 
   return (
@@ -52,7 +54,7 @@ function Sidebar({ user, onSignOut }) {
         </div>
       </div>
 
-      {/* Dynamic Nav Layer */}
+      {/* Navigation Links */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -74,8 +76,8 @@ function Sidebar({ user, onSignOut }) {
           {user?.name?.split(" ").map(n => n[0]).join("") || "A"}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>{user?.name || "Admin"}</div>
-          <div style={{ fontSize: 11, color: "#22c00d", textTransform: "capitalize", fontWeight: 600 }}>{user?.role}</div>
+          <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>{user?.name || "Admin User"}</div>
+          <div style={{ fontSize: 11, color: "#22c00d", textTransform: "capitalize", fontWeight: 600 }}>{user?.role || "admin"}</div>
         </div>
         <button onClick={onSignOut} style={{ background: "none", border: "none", color: "#a3a3a3", cursor: "pointer", fontSize: 16, padding: 4 }}>⏻</button>
       </div>
@@ -96,8 +98,8 @@ export default function RootLayout({ children }) {
         setUser({
           id:    session.user.id,
           email: session.user.email,
-          name:  profile?.full_name || session.user.user_metadata?.full_name || "Admin User",
-          role:  profile?.role || "admin", // 👑 FIXED: Force 'admin' fallback on refresh to keep panel open
+          name:  profile?.full_name || session.user.user_metadata?.full_name || "Admin",
+          role:  profile?.role || "admin", 
         });
       }
       setLoading(false);
