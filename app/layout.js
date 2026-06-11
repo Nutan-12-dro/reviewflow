@@ -25,9 +25,17 @@ const REVIEWER_NAV = [
 
 function Sidebar({ user, onSignOut }) {
   const pathname = usePathname();
-  
-  // 🛡️ CASE-INSENSITIVE SAFETY CHECK
-  const isAdmin = user?.role?.toLowerCase()?.trim() === "admin";
+  const [mounted, setMounted] = useState(false);
+
+  // 🛡️ Guard against hydration mismatches on sidebars
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
+
+  const roleString = (user?.role || "admin").toLowerCase().trim();
+  const isAdmin = roleString === "admin" || roleString === "manager";
   const NAV = isAdmin ? ADMIN_NAV : REVIEWER_NAV;
 
   return (
@@ -54,7 +62,7 @@ function Sidebar({ user, onSignOut }) {
         </div>
       </div>
 
-      {/* Navigation Links */}
+      {/* Navigation Layer */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -89,16 +97,18 @@ export default function RootLayout({ children }) {
   const [user, setUser]           = useState(null);
   const [loading, setLoading]     = useState(true);
   const [campaigns, setCampaigns] = useState([]);
+  const [mounted, setMounted]     = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
+    setMounted(true);
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
         setUser({
           id:    session.user.id,
           email: session.user.email,
-          name:  profile?.full_name || session.user.user_metadata?.full_name || "Admin",
+          name:  profile?.full_name || session.user.user_metadata?.full_name || "Admin User",
           role:  profile?.role || "admin", 
         });
       }
@@ -137,7 +147,15 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
-  if (loading) return <html lang="en"><body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#22c00d" }}>Loading…</body></html>;
+  if (!mounted || loading) {
+    return (
+      <html lang="en">
+        <body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh" }}>
+          <div style={{ color: "#22c00d", fontSize: 14 }}>Loading…</div>
+        </body>
+      </html>
+    );
+  }
 
   return (
     <html lang="en">
