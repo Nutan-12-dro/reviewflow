@@ -36,7 +36,7 @@ export default function DashboardPage() {
         {stats.map((s, i) => (
           <div key={i} className="card-hover" style={{ background: "#0a0a0a", border: `1px solid ${s.border}`, borderRadius: 14, padding: "24px 22px" }}>
             <div style={{ width: 40, height: 40, borderRadius: 10, background: s.bg, border: `1px solid ${s.border}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 18, color: s.color, marginBottom: 16 }}>{s.icon}</div>
-            <div className="stat-number" style={{ fontSize: 36, fontWeight: 800, color: s.color, fontFamily: "'Inter', sans-serif", letterSpacing: "-0.5px", lineHeight: 1 }}>{s.value}</div>
+            <div style={{ fontSize: 36, fontWeight: 800, color: s.color, fontFamily: "'Inter', sans-serif", letterSpacing: "-0.5px", lineHeight: 1 }}>{s.value}</div>
             <div style={{ fontSize: 12, color: "#555", marginTop: 6, fontWeight: 500 }}>{s.label}</div>
           </div>
         ))}

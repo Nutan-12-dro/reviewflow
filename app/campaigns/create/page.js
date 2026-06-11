@@ -20,7 +20,7 @@ export default function CreateCampaignPage() {
     setErrors(prev => ({ ...prev, [key]: "" }));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const e = {};
     if (!form.title.trim())    e.title    = "Title is required";
     if (!form.reviewer)        e.reviewer = "Reviewer is required";
@@ -28,7 +28,7 @@ export default function CreateCampaignPage() {
     if (!form.deadline)        e.deadline = "Deadline is required";
     
     if (Object.keys(e).length > 0) { setErrors(e); return; }
-    addCampaign(form);
+    await addCampaign(form);
     setSubmitted(true);
     setTimeout(() => router.push("/campaigns/active"), 1200);
   };
@@ -44,7 +44,7 @@ export default function CreateCampaignPage() {
       <div style={{ padding: 32, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-          <div style={{ fontSize: 22, fontWeight: 700 }}>Campaign Created!</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "#fff" }}>Campaign Dispatched!</div>
         </div>
       </div>
     );
