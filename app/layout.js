@@ -88,104 +88,71 @@ export default function RootLayout({ children }) {
   const [user, setUser]           = useState(null);
   const [loading, setLoading]     = useState(true);
   const [campaigns, setCampaigns] = useState([]);
-  const [mounted, setMounted]     = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    setMounted(true);
-    
-    // Fetch session immediately on mount
-    supabase.auth.getSession().then(async ({ data: { session } }) => {
+    const initializeData = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      let currentUser = null;
+      
       if (session) {
-        await fetchUserProfile(session.user);
-      } else {
-        setLoading(false);
+        const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
+        currentUser = {
+          id:    session.user.id,
+          email: profile?.email || session.user.email,
+          name:  profile?.full_name || profile?.name || session.user.user_metadata?.full_name || "Nutan",
+          role:  profile?.role || "admin", 
+        };
+        setUser(currentUser);
       }
-    });
 
-    // Listen to real-time auth changes to protect against blank states on fast reloads
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session) {
-        await fetchUserProfile(session.user);
-      } else {
-        setUser(null);
-        setCampaigns([]);
-        setLoading(false);
+      // Force fetch campaigns immediately on load regardless of user session speed
+      const { data, error } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
+      if (data) {
+        setCampaigns(data);
       }
-    });
+      setLoading(false);
+    };
 
-    return () => subscription.unsubscribe();
+    initializeData();
   }, []);
 
-  const fetchUserProfile = async (authUser) => {
-    const { data: profile } = await supabase.from("profiles").select("*").eq("id", authUser.id).single();
-    setUser({
-      id:    authUser.id,
-      email: profile?.email || authUser.email,
-      name:  profile?.full_name || profile?.name || authUser.user_metadata?.full_name || "Nutan",
-      role:  profile?.role || "admin", 
-    });
-  };
-
-  // Fetch campaigns automatically whenever the user object successfully updates
-  useEffect(() => {
-    if (user) {
-      fetchCampaigns();
-    }
-  }, [user]);
-
   const fetchCampaigns = async () => {
-    const { data, error } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
-    if (!error && data) {
-      setCampaigns(data);
-    }
-    setLoading(false);
+    const { data } = await supabase.from("campaigns").select("*").order("created_at", { ascending: false });
+    if (data) setCampaigns(data);
   };
 
   const addCampaign = async (campaign) => {
-    if (!user?.id) {
-      console.error("❌ CONTEXT ERROR: Cannot save campaign because user.id is null or resolving.");
-      alert("Session Error: Please sign out and sign back in to establish a permanent database session.");
-      return;
-    }
+    try {
+      // Send raw unformatted text directly so database accepts it regardless of schema type
+      const payload = { 
+        title: String(campaign.title), 
+        reviewer: String(campaign.reviewer), 
+        priority: String(campaign.priority).toLowerCase().trim(), 
+        budget: String(campaign.budget), 
+        deadline: String(campaign.deadline), 
+        status: "active", 
+        created_by: user?.id || null 
+      };
 
-    // 🛡️ BULLETIN SANITIZATION: Strips out currency characters ($ or commas) 
-    // so numeric or integer database columns don't break and drop the row
-    const rawDigits = campaign.budget.replace(/[^0-9]/g, "");
-    const budgetValue = rawDigits ? parseInt(rawDigits, 10) : 0;
+      const { data, error } = await supabase
+        .from("campaigns")
+        .insert([payload])
+        .select();
 
-    // Standardize your deadline format into a pure DB-compliant string (YYYY-MM-DD)
-    const dbDeadline = new Date(campaign.deadline).toISOString().split('T')[0];
+      if (error) {
+        alert("DATABASE SAVE FAILED: " + error.message);
+        console.error("DB Error Details:", error);
+        return false;
+      }
 
-    const dataPacket = { 
-      title: campaign.title, 
-      reviewer: campaign.reviewer, 
-      priority: campaign.priority.toLowerCase().trim(), 
-      budget: budgetValue, // Passed as a clean integer 
-      deadline: dbDeadline, 
-      status: "active", 
-      created_by: user.id 
-    };
-
-    console.log("🚀 Sending data packet directly to Supabase table...", dataPacket);
-
-    // ⚡ EXECUTE PERMANENT INSERT RECORD QUERY
-    const { data, error } = await supabase
-      .from("campaigns")
-      .insert([dataPacket])
-      .select()
-      .single();
-
-    if (error) {
-      console.error("❌ SUPABASE REJECTED THE SAVE STATEMENT:", error.message, error.details);
-      // This alert box will display the exact database column mismatch row on your screen
-      alert(`Supabase Database Rejection: ${error.message} \nDetails: ${error.details || 'Check RLS policies'}`);
-      return;
-    }
-
-    if (data) {
-      console.log("✅ Row permanently locked into Supabase storage! ID assigned:", data.id);
-      setCampaigns(prev => [data, ...prev]);
+      if (data && data.length > 0) {
+        setCampaigns(prev => [data[0], ...prev]);
+        return true;
+      }
+    } catch (err) {
+      alert("CRITICAL CRASH: " + err.message);
+      return false;
     }
   };
 
@@ -205,7 +172,6 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
-  if (!mounted) return <html lang="en"><body style={{ background: "#000" }} /></html>;
   if (loading) return <html lang="en"><body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#22c00d" }}>Loading…</body></html>;
 
   return (

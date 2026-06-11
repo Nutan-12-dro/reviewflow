@@ -30,17 +30,12 @@ export default function CreateCampaignPage() {
     
     if (Object.keys(eList).length > 0) { setErrors(eList); return; }
 
-    // 🛡️ SANITIZATION HACK: Strips $, spaces, and commas so the DB never rejects it
-    const cleanBudget = form.budget.replace(/[^0-9.]/g, "");
-    const formattedBudget = cleanBudget ? `$${parseFloat(cleanBudget).toLocaleString()}` : form.budget;
-
-    await addCampaign({
-      ...form,
-      budget: formattedBudget
-    });
-
-    setSubmitted(true);
-    setTimeout(() => router.push("/campaigns/active"), 1200);
+    const success = await addCampaign(form);
+    
+    if (success) {
+      setSubmitted(true);
+      setTimeout(() => router.push("/campaigns/active"), 1200);
+    }
   };
 
   const inputStyle = (key) => ({
@@ -54,7 +49,7 @@ export default function CreateCampaignPage() {
       <div style={{ padding: 32, display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
         <div style={{ textAlign: "center" }}>
           <div style={{ fontSize: 48, marginBottom: 16 }}>✅</div>
-          <div style={{ fontSize: 22, fontWeight: 700, color: "#fff" }}>Campaign Dispatched!</div>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "#fff" }}>Campaign Saved Successfully!</div>
         </div>
       </div>
     );
