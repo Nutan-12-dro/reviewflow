@@ -25,17 +25,16 @@ const REVIEWER_NAV = [
 
 function Sidebar({ user, onSignOut }) {
   const pathname = usePathname();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => { setMounted(true); }, []);
-  if (!mounted) return null;
-
-  const roleString = (user?.role || "admin").toLowerCase().trim();
-  const isAdmin = roleString === "admin" || roleString === "manager";
+  
+  // Safe case-insensitive role resolution
+  const userRole = (user?.role || "admin").toLowerCase().trim();
+  const isAdmin = userRole === "admin" || userRole === "manager";
   const NAV = isAdmin ? ADMIN_NAV : REVIEWER_NAV;
 
   return (
     <aside style={{ width: 248, background: "#0a0a0a", borderRight: "1px solid rgba(255,255,255,0.08)", display: "flex", flexDirection: "column", position: "fixed", top: 0, left: 0, bottom: 0, zIndex: 100 }}>
+      
+      {/* Clip Tech Custom Logo */}
       <div style={{ padding: "22px 20px 18px", borderBottom: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 11 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", width: 44, height: 34, minWidth: 44 }}>
           <svg width="100%" height="100%" viewBox="0 0 130 100" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -51,6 +50,7 @@ function Sidebar({ user, onSignOut }) {
         </div>
       </div>
 
+      {/* Nav Links Container */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -66,9 +66,10 @@ function Sidebar({ user, onSignOut }) {
         })}
       </nav>
 
+      {/* Identity Footer */}
       <div style={{ padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #22c00d, #059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" }}>
-          {user?.name?.split(" ").map(n => n[0]).join("") || "N"}
+          {user?.name ? user.name[0].toUpperCase() : "N"}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ fontSize: 13, fontWeight: 600, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", color: "#fff" }}>
@@ -88,11 +89,9 @@ export default function RootLayout({ children }) {
   const [user, setUser]           = useState(null);
   const [loading, setLoading]     = useState(true);
   const [campaigns, setCampaigns] = useState([]);
-  const [mounted, setMounted]     = useState(false);
   const supabase = createClient();
 
   useEffect(() => {
-    setMounted(true);
     supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         const { data: profile } = await supabase.from("profiles").select("*").eq("id", session.user.id).single();
@@ -135,7 +134,6 @@ export default function RootLayout({ children }) {
     if (!error) setCampaigns(prev => prev.map(c => c.id === id ? { ...c, ...updates } : c));
   };
 
-  if (!mounted) return <html lang="en"><body style={{ background: "#000" }} /></html>;
   if (loading) return <html lang="en"><body style={{ margin: 0, background: "#000", display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", color: "#22c00d" }}>Loading…</body></html>;
 
   return (

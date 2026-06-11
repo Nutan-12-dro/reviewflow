@@ -1,21 +1,8 @@
 "use client";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { useApp } from "../../layout";
 
 export default function CompletedCampaignsPage() {
-  const { user, campaigns } = useApp();
-  const router = useRouter();
-
-  const roleString = (user?.role || "admin").toLowerCase().trim();
-  const isAdmin = roleString === "admin" || roleString === "manager";
-
-  useEffect(() => {
-    if (user && !isAdmin) router.push("/reviewer");
-  }, [user, isAdmin, router]);
-
-  if (!user || !isAdmin) return null;
-
+  const { campaigns } = useApp();
   const completed = (campaigns || []).filter(c => c.status === "completed");
 
   return (

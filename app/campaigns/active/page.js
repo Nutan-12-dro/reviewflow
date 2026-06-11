@@ -1,25 +1,13 @@
 "use client";
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useApp } from "../../layout";
 
 const PC = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#555" };
 
 export default function ActiveCampaignsPage() {
-  const { campaigns, deleteCampaign, updateCampaign, user } = useApp();
-  const router = useRouter();
-  
+  const { campaigns, deleteCampaign, updateCampaign } = useApp();
   const [search, setSearch] = useState("");
   const [editingReviewer, setEditingReviewer] = useState(null);
-
-  const roleString = (user?.role || "admin").toLowerCase().trim();
-  const isAdmin = roleString === "admin" || roleString === "manager";
-
-  useEffect(() => {
-    if (user && !isAdmin) router.push("/reviewer");
-  }, [user, isAdmin, router]);
-
-  if (!user || !isAdmin) return null;
 
   const active = (campaigns || [])
     .filter(c => c.status === "active")
@@ -49,7 +37,7 @@ export default function ActiveCampaignsPage() {
                 <button onClick={() => setEditingReviewer(c.id)} className="btn-ghost" style={{ padding: "3px 8px", borderRadius: 6, fontSize: 11, cursor: "pointer" }}>Change</button>
               </div>
               {editingReviewer === c.id && (
-                <select value={c.reviewer} onChange={async e => { await updateCampaign(c.id, { reviewer: e.target.value }); setEditingReviewer(null); }} style={{ background: "#000", border: "1px solid #22c00d", color: "#fff", padding: 4, borderRadius: 6 }}>
+                <select value={c.reviewer} onChange={async e => { await updateCampaign(c.id, { reviewer: e.target.value }); setEditingReviewer(null); }} style={{ background: "#000", border: "1px solid #22c00d", color: "#fff", padding: 4, borderRadius: 6, marginTop: 4 }}>
                   <option value="Nutan">Nutan</option>
                   <option value="Jazee">Jazee</option>
                 </select>

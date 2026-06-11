@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useApp } from "../../layout";
 
@@ -8,21 +8,12 @@ const PRIORITIES = ["urgent", "high", "medium", "low"];
 const priorityColors = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#555555" };
 
 export default function CreateCampaignPage() {
-  const { user, addCampaign } = useApp();
+  const { addCampaign } = useApp();
   const router = useRouter();
-
-  const roleString = (user?.role || "admin").toLowerCase().trim();
-  const isAdmin = roleString === "admin" || roleString === "manager";
-
-  useEffect(() => {
-    if (user && !isAdmin) router.push("/reviewer");
-  }, [user, isAdmin, router]);
 
   const [form, setForm] = useState({ title: "", reviewer: "", priority: "medium", budget: "", deadline: "" });
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState({});
-
-  if (!user || !isAdmin) return null;
 
   const set = (key, val) => {
     setForm(prev => ({ ...prev, [key]: val }));
@@ -69,7 +60,7 @@ export default function CreateCampaignPage() {
       <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 32 }}>
         <div style={{ marginBottom: 24 }}>
           <label className="section-label">Campaign Title</label>
-          <input style={inputStyle("title")} placeholder="e.g. Russia Brothers Marvel" value={form.title} onChange={e => set("title", e.target.value)} />
+          <input style={inputStyle("title")} placeholder="e.g. Project Edit Workspace" value={form.title} onChange={e => set("title", e.target.value)} />
         </div>
 
         <div style={{ marginBottom: 24 }}>
