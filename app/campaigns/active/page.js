@@ -7,14 +7,13 @@ const PC = { urgent:"#ef4444", high:"#f59e0b", medium:"#22c00d", low:"#555" };
 const PO = { urgent:0, high:1, medium:2, low:3 };
 
 export default function ActiveCampaignsPage() {
-  const { campaigns, completeCampaign, deleteCampaign, updateCampaign } = useApp();
-  const [confirmId, setConfirmId]             = useState(null);
+  const { campaigns, deleteCampaign, updateCampaign } = useApp();
   const [deleteId, setDeleteId]               = useState(null);
   const [search, setSearch]                   = useState("");
   const [sortBy, setSortBy]                   = useState("newest");
   const [editingReviewer, setEditingReviewer] = useState(null);
 
-  const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none" };
+  const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none", fontFamily:"Inter,sans-serif" };
 
   const active = (campaigns || [])
     .filter(c => c.status === "active")
@@ -33,7 +32,7 @@ export default function ActiveCampaignsPage() {
         <div>
           <div className="section-label">Campaign Management</div>
           <h1 className="page-title">Active Campaigns</h1>
-          <p style={{ fontSize:14, color:"#555", marginTop:4 }}>{active.length} campaign in progress</p>
+          <p style={{ fontSize:14, color:"#555", marginTop:4 }}>{active.length} campaign{active.length!==1?"s":""} in progress</p>
         </div>
         <Link href="/campaigns/create" className="btn-primary" style={{ padding:"11px 20px", color:"#000", borderRadius:10, fontSize:13, fontWeight:700, textDecoration:"none", boxShadow:"0 4px 20px rgba(34,192,13,0.3)" }}>
           + New Campaign
@@ -62,7 +61,7 @@ export default function ActiveCampaignsPage() {
               </div>
             </div>
 
-            <div style={{ display:"flex", flexDirection:"column", gap:8, marginBottom:16 }}>
+            <div style={{ display:"flex", flexDirection:"column", gap:8 }}>
               <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", fontSize:13 }}>
                 <div style={{ display:"flex", alignItems:"center", gap:8 }}>
                   <span style={{ color: "#3b82f6" }}>👤</span>
@@ -84,12 +83,10 @@ export default function ActiveCampaignsPage() {
                 <span>📅</span><span>Due <strong style={{ color:"#a3a3a3", fontWeight: "normal" }}>{c.deadline}</strong></span>
               </div>
             </div>
-
-            <div style={{ height:1, background:"rgba(255,255,255,0.06)", marginBottom:14 }} />
-            <button onClick={()=>setConfirmId(c.id)} style={{ width:"100%", padding:"10px 0", background:"rgba(34,192,13,0.1)", color:"#22c00d", border:"1px solid rgba(34,192,13,0.25)", borderRadius:8, fontSize:13, fontWeight:600, cursor:"pointer" }}>✓ Mark as Complete</button>
           </div>
         ))}
       </div>
+
       {deleteId && (
         <div style={{ position:"fixed", inset:0, background:"rgba(0,0,0,0.8)", backdropFilter:"blur(4px)", zIndex:200, display:"flex", alignItems:"center", justifyContent:"center" }}>
           <div className="modal-enter" style={{ background:"#0a0a0a", border:"1px solid rgba(239,68,68,0.2)", borderRadius:16, padding:28, width:400 }}>
