@@ -53,7 +53,7 @@ function Sidebar({ user, onSignOut }) {
         </div>
       </div>
 
-      {/* Navigation Trees */}
+      {/* Nav Link List */}
       <nav style={{ flex: 1, padding: "14px 10px", overflowY: "auto" }}>
         <div className="section-label" style={{ padding: "0 10px 8px" }}>
           {isAdmin ? "Manager Panel" : "Reviewer Panel"}
@@ -69,7 +69,7 @@ function Sidebar({ user, onSignOut }) {
         })}
       </nav>
 
-      {/* Profile Info Badge */}
+      {/* Profile Footer Panel */}
       <div style={{ padding: "12px 14px", borderTop: "1px solid rgba(255,255,255,0.08)", display: "flex", alignItems: "center", gap: 10 }}>
         <div style={{ width: 32, height: 32, borderRadius: 8, background: "linear-gradient(135deg, #22c00d, #059669)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 700, color: "#000" }}>
           {user?.name ? user.name[0].toUpperCase() : "N"}

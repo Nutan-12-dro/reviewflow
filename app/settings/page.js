@@ -18,7 +18,8 @@ export default function SettingsPage() {
     }
   }, [user]);
 
-  const handleSave = async () => {
+  const handleSave = async (e) => {
+    e.preventDefault();
     setUpdating(true);
     setMessage("");
     
@@ -31,7 +32,7 @@ export default function SettingsPage() {
       setUser(prev => ({ ...prev, name: fullName, email: email }));
       setMessage("Settings saved successfully! ✅");
     } else {
-      setMessage("Error updating profile config. ❌");
+      setMessage("Error updating profile configuration row. ❌");
     }
     setUpdating(false);
   };
@@ -45,7 +46,7 @@ export default function SettingsPage() {
         <h1 className="page-title">Settings</h1>
       </div>
 
-      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 32 }}>
+      <form onSubmit={handleSave} style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 16, padding: 32 }}>
         <label className="section-label">Full Name</label>
         <input style={inputStyle} value={fullName} onChange={e => setFullName(e.target.value)} />
 
@@ -54,10 +55,10 @@ export default function SettingsPage() {
 
         {message && <div style={{ fontSize: 13, color: "#22c00d", marginBottom: 16 }}>{message}</div>}
 
-        <button onClick={handleSave} disabled={updating} className="btn-primary" style={{ width: "100%", padding: 14, borderRadius: 10, fontSize: 14, cursor: "pointer" }}>
+        <button type="submit" disabled={updating} className="btn-primary" style={{ width: "100%", padding: 14, borderRadius: 10, fontSize: 14, cursor: "pointer" }}>
           {updating ? "Saving Changes…" : "Save Settings →"}
         </button>
-      </div>
+      </form>
     </div>
   );
 }

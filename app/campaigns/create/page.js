@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useApp } from "../../layout";
+import { useApp } from "../layout";
 
 const REVIEWERS = ["Nutan", "Jazee"];
 const PRIORITIES = ["urgent", "high", "medium", "low"];
@@ -29,7 +29,6 @@ export default function CreateCampaignPage() {
     if (!form.deadline)        eList.deadline = "Deadline is required";
     
     if (Object.keys(eList).length > 0) { setErrors(eList); return; }
-    
     await addCampaign(form);
     setSubmitted(true);
     setTimeout(() => router.push("/campaigns/active"), 1200);
