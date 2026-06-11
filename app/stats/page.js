@@ -1,62 +1,158 @@
 "use client";
-import { useApp } from "../layout";
+import { useState, useMemo } from "react";
+import { useApp } from "../../layout";
 
-export default function StatsPage() {
+const priorityColor = { urgent: "#ef4444", high: "#f59e0b", medium: "#22c00d", low: "#a3a3a3" };
+
+export default function CompletedCampaignsPage() {
   const { campaigns } = useApp();
 
-  const reviewerMap = {};
-  campaigns.forEach(c => {
-    if (!c.reviewer) return;
-    if (!reviewerMap[c.reviewer]) reviewerMap[c.reviewer] = { name: c.reviewer, total: 0, completed: 0, active: 0 };
-    reviewerMap[c.reviewer].total++;
-    if (c.status === "completed") reviewerMap[c.reviewer].completed++;
-    if (c.status === "active")    reviewerMap[c.reviewer].active++;
-  });
-  const reviewers = Object.values(reviewerMap);
+  const [search, setSearch]                 = useState("");
+  const [sortBy, setSortBy]                 = useState("newest");
+  const [filterPriority, setFilterPriority] = useState("all");
+  const [filterReviewer, setFilterReviewer] = useState("all");
+  const [minBudget, setMinBudget]           = useState("");
+  const [maxBudget, setMaxBudget]           = useState("");
+  const [fromDate, setFromDate]             = useState("");
+  const [toDate, setToDate]                 = useState("");
+
+  const completed = (campaigns || []).filter(c => c.status === "completed");
+  const reviewers = [...new Set(completed.map(c => c.reviewer).filter(Boolean))];
+
+  const filtered = useMemo(() => {
+    return completed
+      .filter(c => {
+        const q = search.toLowerCase();
+        if (q && !c.title?.toLowerCase().includes(q) && !c.reviewer?.toLowerCase().includes(q)) return false;
+        if (filterPriority !== "all" && c.priority !== filterPriority) return false;
+        if (filterReviewer !== "all" && c.reviewer !== filterReviewer) return false;
+        const budget = parseFloat((c.budget || "0").replace(/[^0-9.]/g, ""));
+        if (minBudget && budget < parseFloat(minBudget)) return false;
+        if (maxBudget && budget > parseFloat(maxBudget)) return false;
+        if (fromDate && new Date(c.completed_at) < new Date(fromDate)) return false;
+        if (toDate && new Date(c.completed_at) > new Date(toDate)) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        if (sortBy === "newest")   return new Date(b.completed_at) - new Date(a.completed_at);
+        if (sortBy === "oldest")   return new Date(a.completed_at) - new Date(b.completed_at);
+        if (sortBy === "priority") return ["urgent","high","medium","low"].indexOf(a.priority) - ["urgent","high","medium","low"].indexOf(b.priority);
+        if (sortBy === "az")       return a.title?.localeCompare(b.title);
+        return 0;
+      });
+  }, [completed, search, sortBy, filterPriority, filterReviewer, minBudget, maxBudget, fromDate, toDate]);
+
+  const totalBudget = filtered.reduce((sum, c) => {
+    const n = parseFloat((c.budget || "0").replace(/[^0-9.]/g, ""));
+    return sum + (isNaN(n) ? 0 : n);
+  }, 0);
+
+  const clearFilters = () => {
+    setSearch(""); setSortBy("newest"); setFilterPriority("all");
+    setFilterReviewer("all"); setMinBudget(""); setMaxBudget("");
+    setFromDate(""); setToDate("");
+  };
+
+  const exportCSV = () => {
+    const headers = ["Title", "Reviewer", "Priority", "Budget", "Deadline", "Completed At"];
+    const rows = filtered.map(c => [
+      c.title, c.reviewer, c.priority, c.budget, c.deadline,
+      c.completed_at ? new Date(c.completed_at).toLocaleDateString() : ""
+    ]);
+    const csv = [headers, ...rows].map(r => r.map(v => `"${v || ""}"`).join(",")).join("\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a"); a.href = url; a.download = "completed-campaigns.csv"; a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const inputStyle = { width: "100%", padding: "10px 12px", background: "#000000", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, color: "#ffffff", fontSize: 13, outline: "none" };
+  const labelStyle = { display: "block", fontSize: 10, fontWeight: 700, letterSpacing: 0.8, textTransform: "uppercase", color: "#a3a3a3", marginBottom: 6 };
 
   return (
-    <div style={{ padding: 32 }}>
-      <div style={{ marginBottom: 28 }}>
-        <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: 1.2, textTransform: "uppercase", color: "#2e3348", marginBottom: 6 }}>Analytics</div>
-        <h1 style={{ fontSize: 26, fontWeight: 700, margin: "0 0 4px", letterSpacing: -0.5 }}>Reviewer Stats</h1>
-        <p style={{ fontSize: 14, color: "#5a6480", margin: 0 }}>Track performance across your review team</p>
+    <div style={{ padding: "36px 40px", background: "#000000", minHeight: "100vh" }}>
+      <div style={{ marginBottom: 24 }}>
+        <div className="section-label">Records</div>
+        <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: 12 }}>
+          <div>
+            <h1 className="page-title">Completed Campaigns</h1>
+            <p style={{ fontSize: 14, color: "#a3a3a3", margin: 0 }}>
+              {filtered.length} of {completed.length} campaigns found · Total budget: <strong style={{ color: "#22c00d" }}>${totalBudget.toLocaleString()}</strong>
+            </p>
+          </div>
+          <div style={{ display: "flex", gap: 10 }}>
+            <button onClick={clearFilters} className="btn-ghost" style={{ padding: "9px 16px", borderRadius: 8, fontSize: 13 }}>✕ Clear Filters</button>
+            <button onClick={exportCSV} style={{ padding: "9px 16px", background: "rgba(34,192,13,0.1)", border: "1px solid rgba(34,192,13,0.3)", borderRadius: 8, color: "#22c00d", fontSize: 13, fontWeight: 600 }}>↓ Export CSV</button>
+          </div>
+        </div>
       </div>
 
-      {reviewers.length === 0 ? (
-        <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "60px 20px", textAlign: "center" }}>
-          <div style={{ fontSize: 40, marginBottom: 12 }}>📊</div>
-          <div style={{ fontSize: 16, fontWeight: 600, marginBottom: 6 }}>No data yet</div>
-          <div style={{ fontSize: 13, color: "#3a4055" }}>Create campaigns and assign reviewers — stats will appear here.</div>
+      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, padding: 20, marginBottom: 24 }}>
+        <div style={{ marginBottom: 16 }}>
+          <label style={labelStyle}>Search Context</label>
+          <input placeholder="Search by campaign name or reviewer..." value={search} onChange={e => setSearch(e.target.value)} style={inputStyle} />
         </div>
-      ) : (
-        <div style={{ display: "grid", gap: 12 }}>
-          {reviewers.map((r, i) => {
-            const pct = r.total ? Math.round((r.completed / r.total) * 100) : 0;
-            const initials = r.name.split(" ").map(n => n[0]).join("");
-            const colors = ["#22c00d","#10b981","#f59e0b","#8b5cf6","#ef4444"];
-            const color = colors[i % colors.length];
-            return (
-              <div key={i} style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.06)", borderRadius: 14, padding: "20px 24px", display: "flex", alignItems: "center", gap: 20 }}>
-                <div style={{ width: 44, height: 44, borderRadius: 12, background: `${color}18`, border: `1px solid ${color}30`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 14, fontWeight: 700, color, flexShrink: 0 }}>
-                  {initials}
-                </div>
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 8 }}>{r.name}</div>
-                  <div style={{ height: 6, background: "#141820", borderRadius: 3, marginBottom: 6 }}>
-                    <div style={{ height: "100%", width: `${pct}%`, background: color, borderRadius: 3, transition: "width 0.5s" }} />
-                  </div>
-                  <div style={{ fontSize: 12, color: "#3a4055", display: "flex", gap: 16 }}>
-                    <span>{r.total} assigned</span>
-                    <span style={{ color: "#10b981" }}>{r.completed} completed</span>
-                    <span style={{ color: "#22c00d" }}>{r.active} active</span>
-                    <span style={{ marginLeft: "auto", fontWeight: 600, color }}>{pct}% completion rate</span>
-                  </div>
-                </div>
-              </div>
-            );
-          })}
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr 1fr", gap: 12, marginBottom: 16 }}>
+          <div>
+            <label style={labelStyle}>Sort By</label>
+            <select value={sortBy} onChange={e => setSortBy(e.target.value)} style={inputStyle}>
+              <option value="newest">Newest completed first</option>
+              <option value="oldest">Oldest completed first</option>
+              <option value="priority">By priority</option>
+              <option value="az">A → Z</option>
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Priority</label>
+            <select value={filterPriority} onChange={e => setFilterPriority(e.target.value)} style={inputStyle}>
+              <option value="all">All priorities</option>
+              <option value="urgent">Urgent</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Reviewer</label>
+            <select value={filterReviewer} onChange={e => setFilterReviewer(e.target.value)} style={inputStyle}>
+              <option value="all">All reviewers</option>
+              {reviewers.map(r => <option key={r} value={r}>{r}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={labelStyle}>Min Budget ($)</label>
+            <input type="number" placeholder="0" value={minBudget} onChange={e => setMinBudget(e.target.value)} style={inputStyle} />
+          </div>
         </div>
-      )}
+
+        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 12 }}>
+          <div>
+            <label style={labelStyle}>Max Budget ($)</label>
+            <input type="number" placeholder="No limit" value={maxBudget} onChange={e => setMaxBudget(e.target.value)} style={inputStyle} />
+          </div>
+          <div>
+            <label style={labelStyle}>Completed From</label>
+            <input type="date" value={fromDate} onChange={e => setFromDate(s => e.target.value)} style={{ ...inputStyle, colorScheme: "dark" }} />
+          </div>
+          <div>
+            <label style={labelStyle}>Completed To</label>
+            <input type="date" value={toDate} onChange={e => setToDate(e.target.value)} style={{ ...inputStyle, colorScheme: "dark" }} />
+          </div>
+        </div>
+      </div>
+
+      <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, overflow: "hidden" }}>
+        {filtered.map(c => (
+          <div key={c.id} style={{ display: "flex", justifyContent: "space-between", padding: "16px 20px", borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+            <div>
+              <div style={{ fontSize: 14, fontWeight: 600, color: "#ffffff" }}>{c.title}</div>
+              <div style={{ fontSize: 11, color: "#555" }}>Reviewer: {c.reviewer}</div>
+            </div>
+            <span style={{ color: "#22c00d", fontWeight: 600 }}>{c.budget}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

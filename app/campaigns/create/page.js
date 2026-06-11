@@ -21,7 +21,7 @@ export default function CreateCampaignPage() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // 🛡️ Prevent full browser reload behavior
+    e.preventDefault();
     const eList = {};
     if (!form.title.trim())    eList.title = "Title is required";
     if (!form.reviewer)        eList.reviewer = "Reviewer is required";
