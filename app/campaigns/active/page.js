@@ -14,7 +14,7 @@ export default function ActiveCampaignsPage() {
   const [sortBy, setSortBy]                   = useState("newest");
   const [editingReviewer, setEditingReviewer] = useState(null);
 
-  const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none" };
+  const iS = { padding:"10px 14px", background:"#0a0a0a", border:"1px solid rgba(255,255,255,0.08)", borderRadius:10, color:"#fff", fontSize:13, outline:"none", fontFamily:"Inter,sans-serif" };
 
   const active = (campaigns || [])
     .filter(c => c.status === "active")

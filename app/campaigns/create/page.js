@@ -22,9 +22,9 @@ export default function CreateCampaignPage() {
 
   const handleSubmit = async () => {
     const e = {};
-    if (!form.title.trim())    e.title    = "Title is required";
+    if (!form.title.trim())    e.title = "Title is required";
     if (!form.reviewer)        e.reviewer = "Reviewer is required";
-    if (!form.budget.trim())   e.budget   = "Budget is required";
+    if (!form.budget.trim())   e.budget = "Budget is required";
     if (!form.deadline)        e.deadline = "Deadline is required";
     
     if (Object.keys(e).length > 0) { setErrors(e); return; }
