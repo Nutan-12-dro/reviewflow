@@ -143,30 +143,48 @@ export default function RootLayout({ children }) {
   };
 
   const addCampaign = async (campaign) => {
-    if (!user?.id) return;
-    
+    if (!user?.id) {
+      console.error("❌ CONTEXT ERROR: Cannot save campaign because user.id is null or resolving.");
+      alert("Session Error: Please sign out and sign back in to establish a permanent database session.");
+      return;
+    }
+
+    // 🛡️ BULLETIN SANITIZATION: Strips out currency characters ($ or commas) 
+    // so numeric or integer database columns don't break and drop the row
+    const rawDigits = campaign.budget.replace(/[^0-9]/g, "");
+    const budgetValue = rawDigits ? parseInt(rawDigits, 10) : 0;
+
+    // Standardize your deadline format into a pure DB-compliant string (YYYY-MM-DD)
+    const dbDeadline = new Date(campaign.deadline).toISOString().split('T')[0];
+
+    const dataPacket = { 
+      title: campaign.title, 
+      reviewer: campaign.reviewer, 
+      priority: campaign.priority.toLowerCase().trim(), 
+      budget: budgetValue, // Passed as a clean integer 
+      deadline: dbDeadline, 
+      status: "active", 
+      created_by: user.id 
+    };
+
+    console.log("🚀 Sending data packet directly to Supabase table...", dataPacket);
+
+    // ⚡ EXECUTE PERMANENT INSERT RECORD QUERY
     const { data, error } = await supabase
       .from("campaigns")
-      .insert([
-        { 
-          title: campaign.title, 
-          reviewer: campaign.reviewer, 
-          priority: campaign.priority.toLowerCase().trim(), 
-          budget: campaign.budget, 
-          deadline: campaign.deadline, 
-          status: "active", 
-          created_by: user.id 
-        }
-      ])
+      .insert([dataPacket])
       .select()
       .single();
 
     if (error) {
-      console.error("Supabase rejected insertion:", error.message);
+      console.error("❌ SUPABASE REJECTED THE SAVE STATEMENT:", error.message, error.details);
+      // This alert box will display the exact database column mismatch row on your screen
+      alert(`Supabase Database Rejection: ${error.message} \nDetails: ${error.details || 'Check RLS policies'}`);
       return;
     }
 
     if (data) {
+      console.log("✅ Row permanently locked into Supabase storage! ID assigned:", data.id);
       setCampaigns(prev => [data, ...prev]);
     }
   };
