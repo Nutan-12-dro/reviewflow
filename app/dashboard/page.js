@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useApp } from "../layout";
 import Link from "next/link";
 // 1. ADDED IMPORT FOR YOUR NEW COMPONENT
-import ActiveCampaignsStats from "../../components/CampaignStats";
+import ActiveCampaignsStats from "../../Components/CampaignStats";
 
 export default function DashboardPage() {
   const { user, campaigns } = useApp();
