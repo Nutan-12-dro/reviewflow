@@ -45,7 +45,7 @@ export default function DashboardPage() {
       </div>
 
       {/* 2. PLACED THE NEW COMPONENT HERE AND PASSED THE "active" VARIABLE */}
-      <ActiveCampaignsStats activeCampaigns={active} />
+      <ActiveCampaignsStats campaigns={campaigns} />
 
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20 }}>
         <div style={{ background: "#0a0a0a", border: "1px solid rgba(255,255,255,0.08)", borderRadius: 14, overflow: "hidden" }}>
