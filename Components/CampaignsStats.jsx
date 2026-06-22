@@ -13,12 +13,11 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-// Helper component for the cool data labels
 function StatBox({ label, value, hexColor = "#ffffff" }) {
   return (
-    <div className="bg-[#111318] border border-[#1e2329] rounded-xl p-4 flex flex-col justify-center w-full">
-      <span className="text-[#8a919e] text-[10px] uppercase tracking-widest font-mono mb-1">{label}</span>
-      <span className="text-2xl font-bold" style={{ color: hexColor }}>{value}</span>
+    <div style={{ background: "#111318", border: "1px solid #1e2329", borderRadius: "12px", padding: "16px", display: "flex", flexDirection: "column", justifyContent: "center", width: "100%" }}>
+      <span style={{ color: "#8a919e", fontSize: "10px", textTransform: "uppercase", letterSpacing: "0.1em", fontFamily: "monospace", marginBottom: "4px" }}>{label}</span>
+      <span style={{ fontSize: "24px", fontWeight: "bold", color: hexColor }}>{value}</span>
     </div>
   );
 }
@@ -26,7 +25,6 @@ function StatBox({ label, value, hexColor = "#ffffff" }) {
 export default function CampaignsStats({ campaigns = [] }) {
   const total = campaigns.length || 0;
 
-  // 1. Process Status Data
   const activeCount = campaigns.filter((c) => c.status === "active").length;
   const completedCount = campaigns.filter((c) => c.status === "completed").length;
   const completionRate = total > 0 ? Math.round((completedCount / total) * 100) : 0;
@@ -35,12 +33,9 @@ export default function CampaignsStats({ campaigns = [] }) {
     { name: "Active", value: activeCount },
     { name: "Completed", value: completedCount },
   ];
-  const STATUS_COLORS = ["#a855f7", "#ffffff"]; // Neon Purple & White
+  const STATUS_COLORS = ["#a855f7", "#ffffff"]; 
 
-  // 2. Process Priority Data
-  const urgentCount = campaigns.filter(
-    (c) => c.priority?.toLowerCase() === "high" || c.priority?.toLowerCase() === "urgent"
-  ).length;
+  const urgentCount = campaigns.filter((c) => c.priority?.toLowerCase() === "high" || c.priority?.toLowerCase() === "urgent").length;
   const standardCount = total - urgentCount;
   const urgentRate = total > 0 ? Math.round((urgentCount / total) * 100) : 0;
 
@@ -48,9 +43,8 @@ export default function CampaignsStats({ campaigns = [] }) {
     { name: "Urgent / High", value: urgentCount },
     { name: "Standard", value: standardCount },
   ];
-  const PRIORITY_COLORS = ["#ff5e00", "#3b82f6"]; // Neon Orange & Blue
+  const PRIORITY_COLORS = ["#ff5e00", "#3b82f6"]; 
 
-  // 3. Process Reviewer Workload Data
   const workloadMap = {};
   campaigns.forEach((c) => {
     if (c.status === "active") {
@@ -70,7 +64,7 @@ export default function CampaignsStats({ campaigns = [] }) {
   const avgWorkload = activeReviewers > 0 ? (workloads.reduce((a, b) => a + b, 0) / activeReviewers).toFixed(1) : 0;
 
   if (!campaigns || total === 0) {
-    return <div className="text-[#8a919e] mt-8 text-sm font-mono tracking-wider">Loading visual data...</div>;
+    return <div style={{ color: "#8a919e", marginTop: "32px", fontSize: "14px", fontFamily: "monospace" }}>Loading visual data...</div>;
   }
 
   const customTooltipStyle = {
@@ -83,16 +77,16 @@ export default function CampaignsStats({ campaigns = [] }) {
   };
 
   return (
-    <div className="flex flex-col gap-6 mt-8 w-full">
+    <div style={{ display: "flex", flexDirection: "column", gap: "24px", marginTop: "32px", width: "100%" }}>
       
-      {/* Top Row: Donut Charts (Stacked on mobile, Side-by-Side on very large screens) */}
-      <div className="grid grid-cols-1 2xl:grid-cols-2 gap-6 w-full">
+      {/* Top Row: Donut Charts */}
+      <div style={{ display: "flex", gap: "24px", flexWrap: "wrap", width: "100%" }}>
         
         {/* Card 1: Campaign Status */}
-        <div className="p-6 bg-[#0a0a0a] border border-[#1e2329] rounded-2xl shadow-lg flex flex-col md:flex-row items-center gap-8">
-          <div className="w-full md:w-1/2 h-[220px]">
-            <h3 className="text-white text-md font-bold mb-1 tracking-wide">Campaign Status</h3>
-            <p className="text-[#8a919e] text-xs font-mono mb-2">Active vs Completed</p>
+        <div style={{ flex: "1 1 calc(50% - 12px)", minWidth: "340px", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
+          <div style={{ flex: "1 1 200px", height: "220px" }}>
+            <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Campaign Status</h3>
+            <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active vs Completed</p>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={statusPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={4} dataKey="value" stroke="none">
@@ -104,7 +98,7 @@ export default function CampaignsStats({ campaigns = [] }) {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="w-full md:w-1/2 grid grid-cols-2 gap-4">
+          <div style={{ flex: "1 1 150px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <StatBox label="Total Count" value={total} hexColor="#ffffff" />
             <StatBox label="Complete %" value={`${completionRate}%`} hexColor="#00ff88" />
             <StatBox label="Active" value={activeCount} hexColor="#a855f7" />
@@ -113,10 +107,10 @@ export default function CampaignsStats({ campaigns = [] }) {
         </div>
 
         {/* Card 2: Priority Matrix */}
-        <div className="p-6 bg-[#0a0a0a] border border-[#1e2329] rounded-2xl shadow-lg flex flex-col md:flex-row items-center gap-8">
-          <div className="w-full md:w-1/2 h-[220px]">
-            <h3 className="text-white text-md font-bold mb-1 tracking-wide">Priority Matrix</h3>
-            <p className="text-[#8a919e] text-xs font-mono mb-2">Urgent Workload</p>
+        <div style={{ flex: "1 1 calc(50% - 12px)", minWidth: "340px", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
+          <div style={{ flex: "1 1 200px", height: "220px" }}>
+            <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Priority Matrix</h3>
+            <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Urgent Workload</p>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={priorityPieData} cx="50%" cy="50%" innerRadius={60} outerRadius={85} paddingAngle={4} dataKey="value" stroke="none">
@@ -128,7 +122,7 @@ export default function CampaignsStats({ campaigns = [] }) {
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="w-full md:w-1/2 grid grid-cols-2 gap-4">
+          <div style={{ flex: "1 1 150px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <StatBox label="Critical Load" value={`${urgentRate}%`} hexColor="#ff5e00" />
             <StatBox label="Urgent Tasks" value={urgentCount} hexColor="#ff5e00" />
             <StatBox label="Standard" value={standardCount} hexColor="#3b82f6" />
@@ -138,11 +132,11 @@ export default function CampaignsStats({ campaigns = [] }) {
 
       </div>
 
-      {/* Bottom Row: Bar Chart (Full Width) */}
-      <div className="p-6 bg-[#0a0a0a] border border-[#1e2329] rounded-2xl shadow-lg flex flex-col xl:flex-row items-center gap-8 w-full">
-        <div className="w-full xl:w-2/3 h-[240px]">
-          <h3 className="text-white text-md font-bold mb-1 tracking-wide">Reviewer Load</h3>
-          <p className="text-[#8a919e] text-xs font-mono mb-4">Active Tasks per Assignee</p>
+      {/* Bottom Row: Bar Chart */}
+      <div style={{ width: "100%", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "32px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
+        <div style={{ flex: "2 1 400px", height: "240px" }}>
+          <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Reviewer Load</h3>
+          <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active Tasks per Assignee</p>
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={barData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <XAxis dataKey="reviewer" stroke="#8a919e" fontSize={11} tickLine={false} axisLine={false} />
@@ -152,7 +146,7 @@ export default function CampaignsStats({ campaigns = [] }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="w-full xl:w-1/3 flex flex-col gap-4">
+        <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: "16px" }}>
           <StatBox label="Active Reviewers" value={activeReviewers} hexColor="#ffffff" />
           <StatBox label="Highest Workload" value={maxWorkload} hexColor="#00ff88" />
           <StatBox label="Average Load" value={avgWorkload} hexColor="#a855f7" />
