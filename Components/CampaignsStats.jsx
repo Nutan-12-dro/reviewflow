@@ -34,14 +34,10 @@ export default function CampaignsStats({ campaigns = [] }) {
     { name: "Completed", value: completedCount },
   ];
   const STATUS_COLORS = ["#a855f7", "#ffffff"]; 
-  const urgentCount = campaigns.filter(
-    (c) => 
-      c.status === "active" && 
-      (c.priority?.toLowerCase() === "high" || c.priority?.toLowerCase() === "urgent")
-  ).length;
-  const standardCount = activeCount - urgentCount; 
+
+  const urgentCount = campaigns.filter((c) => c.status === "active" && (c.priority?.toLowerCase() === "high" || c.priority?.toLowerCase() === "urgent")).length;
+  const standardCount = activeCount - urgentCount;
   const activePriorityTotal = urgentCount + standardCount;
-  
   const urgentRate = activePriorityTotal > 0 ? Math.round((urgentCount / activePriorityTotal) * 100) : 0;
 
   const priorityPieData = [
@@ -89,7 +85,8 @@ export default function CampaignsStats({ campaigns = [] }) {
         
         {/* Card 1: Campaign Status */}
         <div style={{ flex: "1 1 calc(50% - 12px)", minWidth: "340px", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-          <div style={{ flex: "1 1 200px", height: "220px" }}>
+          {/* FIX: Added display flex and column direction here */}
+          <div style={{ flex: "1 1 200px", height: "240px", display: "flex", flexDirection: "column" }}>
             <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Campaign Status</h3>
             <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active vs Completed</p>
             <ResponsiveContainer width="100%" height="100%">
@@ -113,7 +110,8 @@ export default function CampaignsStats({ campaigns = [] }) {
 
         {/* Card 2: Priority Matrix */}
         <div style={{ flex: "1 1 calc(50% - 12px)", minWidth: "340px", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-          <div style={{ flex: "1 1 200px", height: "220px" }}>
+          {/* FIX: Added display flex and column direction here */}
+          <div style={{ flex: "1 1 200px", height: "240px", display: "flex", flexDirection: "column" }}>
             <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Priority Matrix</h3>
             <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Urgent Workload</p>
             <ResponsiveContainer width="100%" height="100%">
@@ -128,10 +126,10 @@ export default function CampaignsStats({ campaigns = [] }) {
             </ResponsiveContainer>
           </div>
           <div style={{ flex: "1 1 150px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-           <StatBox label="Critical Load" value={`${urgentRate}%`} hexColor="#ff5e00" />
-           <StatBox label="Urgent Tasks" value={urgentCount} hexColor="#ff5e00" />
-           <StatBox label="Standard" value={standardCount} hexColor="#3b82f6" />
-           <StatBox label="Active Total" value={activePriorityTotal} hexColor="#ffffff" />
+            <StatBox label="Critical Load" value={`${urgentRate}%`} hexColor="#ff5e00" />
+            <StatBox label="Urgent Tasks" value={urgentCount} hexColor="#ff5e00" />
+            <StatBox label="Standard" value={standardCount} hexColor="#3b82f6" />
+            <StatBox label="Active Total" value={activePriorityTotal} hexColor="#ffffff" />
           </div>
         </div>
 
@@ -139,7 +137,8 @@ export default function CampaignsStats({ campaigns = [] }) {
 
       {/* Bottom Row: Bar Chart */}
       <div style={{ width: "100%", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "32px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-        <div style={{ flex: "2 1 400px", height: "240px" }}>
+        {/* FIX: Added display flex and column direction here */}
+        <div style={{ flex: "2 1 400px", height: "240px", display: "flex", flexDirection: "column" }}>
           <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Reviewer Load</h3>
           <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active Tasks per Assignee</p>
           <ResponsiveContainer width="100%" height="100%">
