@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import CampaignsStats from "../../Components/CampaignsStats";
+import CampaignsStats from "../../../Components/CampaignsStats";
 
 export default function ReviewerLiveQueue({ campaigns = [], currentUser = "Nutan" }) {
   const myCampaigns = campaigns.filter(c => c.reviewer === currentUser);
