@@ -5,7 +5,8 @@ import {
   PieChart,
   Pie,
   Cell,
-  BarChart,
+  ComposedChart,
+  Line,
   Bar,
   XAxis,
   YAxis,
@@ -46,23 +47,34 @@ export default function CampaignsStats({ campaigns = [] }) {
   ];
   const PRIORITY_COLORS = ["#ff5e00", "#3b82f6"]; 
 
+  // UPDATED: Tracking both active and completed for the composed chart
   const workloadMap = {};
   campaigns.forEach((c) => {
-    if (c.status === "active") {
-      const reviewer = c.reviewer || "Unassigned";
-      workloadMap[reviewer] = (workloadMap[reviewer] || 0) + 1;
+    const reviewer = c.reviewer || "Unassigned";
+    if (!workloadMap[reviewer]) {
+      workloadMap[reviewer] = { active: 0, completed: 0 };
     }
+    if (c.status === "active") workloadMap[reviewer].active += 1;
+    if (c.status === "completed") workloadMap[reviewer].completed += 1;
   });
 
   const barData = Object.keys(workloadMap).map((key) => ({
     reviewer: key,
-    activeCampaigns: workloadMap[key],
+    activeCampaigns: workloadMap[key].active,
+    completedCampaigns: workloadMap[key].completed,
   }));
 
+  // UPDATED: Forcing Nutan to be the first index in the array
+  barData.sort((a, b) => {
+    if (a.reviewer === "Nutan") return -1;
+    if (b.reviewer === "Nutan") return 1;
+    return a.reviewer.localeCompare(b.reviewer); 
+  });
+
   const activeReviewers = Object.keys(workloadMap).length;
-  const workloads = Object.values(workloadMap);
-  const maxWorkload = workloads.length > 0 ? Math.max(...workloads) : 0;
-  const avgWorkload = activeReviewers > 0 ? (workloads.reduce((a, b) => a + b, 0) / activeReviewers).toFixed(1) : 0;
+  const activeWorkloads = Object.values(workloadMap).map(w => w.active);
+  const maxWorkload = activeWorkloads.length > 0 ? Math.max(...activeWorkloads) : 0;
+  const avgWorkload = activeReviewers > 0 ? (activeWorkloads.reduce((a, b) => a + b, 0) / activeReviewers).toFixed(1) : 0;
 
   if (!campaigns || total === 0) {
     return <div style={{ color: "#8a919e", marginTop: "32px", fontSize: "14px", fontFamily: "monospace" }}>Loading visual data...</div>;
@@ -85,7 +97,6 @@ export default function CampaignsStats({ campaigns = [] }) {
         
         {/* Card 1: Campaign Status */}
         <div style={{ flex: "1 1 calc(50% - 12px)", minWidth: "340px", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-          {/* FIX: Added display flex and column direction here */}
           <div style={{ flex: "1 1 200px", height: "240px", display: "flex", flexDirection: "column" }}>
             <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Campaign Status</h3>
             <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active vs Completed</p>
@@ -110,7 +121,6 @@ export default function CampaignsStats({ campaigns = [] }) {
 
         {/* Card 2: Priority Matrix */}
         <div style={{ flex: "1 1 calc(50% - 12px)", minWidth: "340px", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "24px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-          {/* FIX: Added display flex and column direction here */}
           <div style={{ flex: "1 1 200px", height: "240px", display: "flex", flexDirection: "column" }}>
             <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Priority Matrix</h3>
             <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Urgent Workload</p>
@@ -135,19 +145,21 @@ export default function CampaignsStats({ campaigns = [] }) {
 
       </div>
 
-      {/* Bottom Row: Bar Chart */}
+      {/* Bottom Row: Composed Bar & Line Chart */}
       <div style={{ width: "100%", padding: "24px", background: "#0a0a0a", border: "1px solid #1e2329", borderRadius: "16px", display: "flex", gap: "32px", alignItems: "center", flexWrap: "wrap", boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.5)" }}>
-        {/* FIX: Added display flex and column direction here */}
         <div style={{ flex: "2 1 400px", height: "240px", display: "flex", flexDirection: "column" }}>
-          <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Reviewer Load</h3>
-          <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active Tasks per Assignee</p>
+          <h3 style={{ color: "#fff", fontSize: "16px", fontWeight: "bold", margin: "0 0 4px 0", letterSpacing: "0.025em" }}>Reviewer Performance</h3>
+          <p style={{ color: "#8a919e", fontSize: "12px", fontFamily: "monospace", margin: "0 0 16px 0" }}>Active Load vs Completed Tasks</p>
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={barData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+            {/* UPDATED: Changed from BarChart to ComposedChart */}
+            <ComposedChart data={barData} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
               <XAxis dataKey="reviewer" stroke="#8a919e" fontSize={11} tickLine={false} axisLine={false} />
               <YAxis stroke="#8a919e" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
               <Tooltip cursor={{ fill: "#13161c" }} contentStyle={customTooltipStyle} />
-              <Bar dataKey="activeCampaigns" fill="#00ff88" radius={[6, 6, 0, 0]} barSize={40} />
-            </BarChart>
+              <Bar dataKey="activeCampaigns" name="Active Tasks" fill="#00ff88" radius={[6, 6, 0, 0]} barSize={40} />
+              {/* UPDATED: Added the Line on top! */}
+              <Line type="monotone" dataKey="completedCampaigns" name="Completed" stroke="#a855f7" strokeWidth={3} dot={{ r: 5, fill: "#a855f7", stroke: "#fff", strokeWidth: 2 }} />
+            </ComposedChart>
           </ResponsiveContainer>
         </div>
         <div style={{ flex: "1 1 200px", display: "flex", flexDirection: "column", gap: "16px" }}>
