@@ -34,10 +34,15 @@ export default function CampaignsStats({ campaigns = [] }) {
     { name: "Completed", value: completedCount },
   ];
   const STATUS_COLORS = ["#a855f7", "#ffffff"]; 
-
-  const urgentCount = campaigns.filter((c) => c.priority?.toLowerCase() === "high" || c.priority?.toLowerCase() === "urgent").length;
-  const standardCount = total - urgentCount;
-  const urgentRate = total > 0 ? Math.round((urgentCount / total) * 100) : 0;
+  const urgentCount = campaigns.filter(
+    (c) => 
+      c.status === "active" && 
+      (c.priority?.toLowerCase() === "high" || c.priority?.toLowerCase() === "urgent")
+  ).length;
+  const standardCount = activeCount - urgentCount; 
+  const activePriorityTotal = urgentCount + standardCount;
+  
+  const urgentRate = activePriorityTotal > 0 ? Math.round((urgentCount / activePriorityTotal) * 100) : 0;
 
   const priorityPieData = [
     { name: "Urgent / High", value: urgentCount },
@@ -123,10 +128,10 @@ export default function CampaignsStats({ campaigns = [] }) {
             </ResponsiveContainer>
           </div>
           <div style={{ flex: "1 1 150px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
-            <StatBox label="Critical Load" value={`${urgentRate}%`} hexColor="#ff5e00" />
-            <StatBox label="Urgent Tasks" value={urgentCount} hexColor="#ff5e00" />
-            <StatBox label="Standard" value={standardCount} hexColor="#3b82f6" />
-            <StatBox label="Total Priority" value={total} hexColor="#ffffff" />
+           <StatBox label="Critical Load" value={`${urgentRate}%`} hexColor="#ff5e00" />
+           <StatBox label="Urgent Tasks" value={urgentCount} hexColor="#ff5e00" />
+           <StatBox label="Standard" value={standardCount} hexColor="#3b82f6" />
+           <StatBox label="Active Total" value={activePriorityTotal} hexColor="#ffffff" />
           </div>
         </div>
 
